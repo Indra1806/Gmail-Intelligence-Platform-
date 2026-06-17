@@ -1,6 +1,9 @@
+![BANNER](image.png)
+
+
 # Thread-Aware Email Reply System: Implementation
 
-As a Senior AI Engineer, I've designed the Thread-Aware Reply System. The hardest challenge in this requirement isn't generating the text—it's correctly manipulating RFC 2822 email headers (`In-Reply-To` and `References`) so that Gmail successfully groups the AI-generated reply into the existing conversation thread.
+I've designed the Thread-Aware Reply System. The hardest challenge in this requirement isn't generating the text—it's correctly manipulating RFC 2822 email headers (`In-Reply-To` and `References`) so that Gmail successfully groups the AI-generated reply into the existing conversation thread.
 
 ## 1. Context Collection Logic
 

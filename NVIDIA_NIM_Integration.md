@@ -1,6 +1,9 @@
+![BANNER](image.png)
+
+
 # NVIDIA NIM Integration: RAG Reranking Pipeline
 
-As an AI Infrastructure Engineer, I have designed a highly specialized, practical role for the secondary AI model. While Gemini handles all generative tasks (summarization, embeddings, composition, and RAG synthesis), we will use **NVIDIA NIM for Cross-Encoder Reranking**.
+I have designed a highly specialized, practical role for the secondary AI model. While Gemini handles all generative tasks (summarization, embeddings, composition, and RAG synthesis), we will use **NVIDIA NIM for Cross-Encoder Reranking**.
 
 ## Why Reranking? (The Justification)
 When searching Supabase using `pgvector`, we rely on Cosine Similarity (bi-encoder embeddings). This is fast but mathematically flawed for complex queries because it only checks semantic distance, not true contextual relevance. 

@@ -1,6 +1,9 @@
+![BANNER](image.png)
+
+
 # Email Summarization System: AI Implementation
 
-As a Staff AI Engineer, I've designed this summarization system taking full advantage of the Gemini API. 
+I've designed this summarization system taking full advantage of the Gemini API. 
 
 ## 1. Architectural Strategy: Chunking & Context
 

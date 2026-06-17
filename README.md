@@ -1,4 +1,6 @@
-# Repeatless: Enterprise-Grade Gmail Intelligence Platform
+![BANNER](image.png)
+
+# AI POWERED GMAIL INTELLIGENCE PLATFORM
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)

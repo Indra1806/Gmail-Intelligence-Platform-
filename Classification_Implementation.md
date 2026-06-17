@@ -1,6 +1,7 @@
-# Email Classification System: AI Implementation
+![BANNER](image.png)
 
-As an AI Classification Engineer, I have designed a robust email categorization pipeline. 
+
+# Email Classification System: AI Implementation
 
 While our initial roadmap suggested using NVIDIA NIM for categorization, you explicitly requested the **Gemini API** here. This is actually a fantastic choice because Gemini 1.5 Flash supports **Strict JSON Output** via `response_schema`, ensuring our pipeline never breaks due to malformed string parsing.
 

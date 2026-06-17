@@ -281,3 +281,11 @@
 @media (hover: none) {
   * { -webkit-tap-highlight-color: transparent; }
 }
+
+/* Custom grid background pattern */
+.bg-grid-pattern {
+  background-size: 50px 50px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+}

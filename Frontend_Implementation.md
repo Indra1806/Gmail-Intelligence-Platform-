@@ -1,6 +1,9 @@
+![BANNER](image.png)
+
+
 # Next.js 15 Frontend Implementation
 
-As a Senior Next.js Engineer, I have designed the frontend architecture using the modern **App Router**, **Tailwind CSS**, and **shadcn/ui**. This stack ensures a highly responsive, modern "glassmorphic" feel with minimal boilerplate, fulfilling the requirement for a premium user experience.
+I have designed the frontend architecture using the modern **App Router**, **Tailwind CSS**, and **shadcn/ui**. This stack ensures a highly responsive, modern "glassmorphic" feel with minimal boilerplate, fulfilling the requirement for a premium user experience.
 
 ## 1. App Router Folder Structure
 

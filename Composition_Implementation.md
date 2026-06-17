@@ -1,6 +1,9 @@
+![BANNER](image.png)
+
+
 # AI Email Composition Assistant: Implementation
 
-As a Senior LLM Engineer, I have built the composition assistant. The key innovation here is using **Structured JSON Outputs** to guarantee the AI generates both a Subject Line and an Email Body simultaneously, eliminating the need for two separate LLM calls or hacky regex parsing.
+The key innovation here is using **Structured JSON Outputs** to guarantee the AI generates both a Subject Line and an Email Body simultaneously, eliminating the need for two separate LLM calls or hacky regex parsing.
 
 ## 1. Pydantic Models for Input/Output
 

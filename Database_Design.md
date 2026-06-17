@@ -1,3 +1,6 @@
+![BANNER](image.png)
+
+
 # Database Schema Design: Supabase (PostgreSQL + pgvector)
 
 ## 1. Entity-Relationship (ER) Diagram

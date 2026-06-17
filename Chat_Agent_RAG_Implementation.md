@@ -1,6 +1,8 @@
+![BANNER](image.png)
+
+
 # AI Chat Agent (RAG): Implementation
 
-As a Staff AI Engineer, I have architected the Retrieval-Augmented Generation (RAG) pipeline for the Chat Agent. This is the centerpiece of the intelligence platform. It ensures strict source attribution, zero hallucination, and high-precision retrieval across both granular facts and broad thread contexts.
 
 ## 1. Embedding & Chunking Strategy
 

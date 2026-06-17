@@ -1,3 +1,6 @@
+![BANNER](image.png)
+
+
 # FastAPI Backend Architecture: Clean Architecture Design
 
 This document details the production-ready structure for the FastAPI backend, utilizing a clean architecture pattern to separate concerns between routing, business logic, data access, and external APIs.

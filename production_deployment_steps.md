@@ -1,3 +1,6 @@
+![BANNER](image.png)
+
+
 # Production Deployment Guide: Gmail Intelligence Platform
 
 This guide outlines the production deployment steps for the **Gmail Intelligence Platform**, targeting **Vercel** for the frontend, **Railway** for the backend, and **Supabase** for the database.
