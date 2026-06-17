@@ -1,6 +1,13 @@
-![BANNER](image.png)
+<div align = center>
 
-# AI POWERED GMAIL INTELLIGENCE PLATFORM
+<!-- OVO.AI Banner -->
+<p align="center">
+  <img src="image.png" alt="OVO.AI Banner" width="100%" style="border-radius:8px;"/>
+</p>
+
+<h1><b>AI POWERED GMAIL INTELLIGENCE PLATFORM</b></h1>
+
+</div>
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)

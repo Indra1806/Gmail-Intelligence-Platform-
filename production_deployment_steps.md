@@ -1,4 +1,7 @@
-![BANNER](image.png)
+<!-- OVO.AI Banner -->
+<p align="center">
+  <img src="image.png" alt="OVO.AI Banner" width="100%" style="border-radius:8px;"/>
+</p>
 
 
 # Production Deployment Guide: Gmail Intelligence Platform

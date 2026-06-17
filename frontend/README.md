@@ -1,4 +1,7 @@
-![BANNER](image.png)
+<!-- OVO.AI Banner -->
+<p align="center">
+  <img src="image.png" alt="OVO.AI Banner" width="100%" style="border-radius:8px;"/>
+</p>
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
