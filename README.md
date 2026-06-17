@@ -7,13 +7,15 @@
 
 <h1><b>AI POWERED GMAIL INTELLIGENCE PLATFORM</b></h1>
 
-</div>
+
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-pgvector-3ECF8E?style=flat&logo=supabase)](https://supabase.com/)
 [![Gemini](https://img.shields.io/badge/AI-Gemini%201.5-blue)](https://deepmind.google/technologies/gemini/)
 [![NVIDIA NIM](https://img.shields.io/badge/AI-NVIDIA%20NIM-76B900)](https://developer.nvidia.com/nim)
+
+</div>
 
 Repeatless is a production-ready, AI-powered Gmail Intelligence Platform. It connects securely to a user's Gmail inbox, parses message threads, automatically categorizes incoming mail using structured JSON models, and exposes a semantic RAG conversational assistant to query, summarize, and act on email data.
 
