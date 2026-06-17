@@ -14,7 +14,7 @@ class ChatAgentService:
         self.sandbox = False
         if not self.sandbox:
             genai.configure(api_key=settings.GEMINI_API_KEY)
-            self.model = genai.GenerativeModel('gemini-1.5-pro')
+            self.model = genai.GenerativeModel('gemini-2.0-flash')
 
     async def _format_context(self, docs: list[dict]) -> str:
         blocks = []

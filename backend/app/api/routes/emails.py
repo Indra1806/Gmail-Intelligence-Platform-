@@ -13,11 +13,12 @@ router = APIRouter()
 async def get_emails(
     account_id: str = Query(..., description="Gmail account UUID"),
     category: str | None = Query(None, description="Category filter"),
+    search: str | None = Query(None, description="Search keyword"),
     repo: EmailRepository = Depends(get_email_repo)
 ):
     """Fetches list of all synchronized emails matching filter options."""
     try:
-        emails = await repo.get_all_emails_by_account(account_id, category)
+        emails = await repo.get_all_emails_by_account(account_id, category, search)
         return emails
     except Exception as e:
         logger.error(f"Error fetching emails: {e}")
@@ -28,11 +29,12 @@ async def get_emails(
 async def get_threads(
     account_id: str = Query(..., description="Gmail account UUID"),
     category: str | None = Query(None, description="Category filter"),
+    search: str | None = Query(None, description="Search keyword"),
     repo: ThreadRepository = Depends(get_thread_repo)
 ):
     """Fetches list of thread records matching filter options."""
     try:
-        threads = await repo.get_all_threads_by_account(account_id, category)
+        threads = await repo.get_all_threads_by_account(account_id, category, search)
         return threads
     except Exception as e:
         logger.error(f"Error fetching threads: {e}")

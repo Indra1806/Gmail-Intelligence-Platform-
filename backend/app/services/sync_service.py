@@ -187,19 +187,30 @@ class SyncService:
                 "gmail_thread_id": gmail_thread_id,
                 "subject": subject,
                 "participant_emails": list(set([from_email] + to_emails)),
-                "last_message_at": received_at,
+                "last_message_at": received_at.isoformat(),
                 "message_count": 1,
                 "category": "Uncategorized"
             })
         else:
             # Update participants & message count
             participants = list(set(thread.get("participant_emails", []) + [from_email] + to_emails))
-            new_last = max(thread.get("last_message_at", received_at), received_at)
+            db_last = thread.get("last_message_at")
+            if isinstance(db_last, str):
+                try:
+                    db_last_parsed = datetime.fromisoformat(db_last.replace('Z', '+00:00'))
+                except Exception:
+                    db_last_parsed = received_at
+            elif isinstance(db_last, datetime):
+                db_last_parsed = db_last
+            else:
+                db_last_parsed = received_at
+                
+            new_last = max(db_last_parsed, received_at)
             thread = await self.thread_repo.create_or_update({
                 "account_id": account_id,
                 "gmail_thread_id": gmail_thread_id,
                 "participant_emails": participants,
-                "last_message_at": new_last,
+                "last_message_at": new_last.isoformat(),
                 "message_count": thread.get("message_count", 0) + 1
             })
 

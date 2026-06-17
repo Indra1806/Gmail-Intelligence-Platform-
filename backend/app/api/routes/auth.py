@@ -85,7 +85,12 @@ async def callback(
         if not user:
             user = await user_repo.create(gmail_address)
             
-        expiry = datetime.now(timezone.utc) + timedelta(seconds=creds.expiry - datetime.now().timestamp() if creds.expiry else 3600)
+        if creds.expiry:
+            expiry = creds.expiry
+            if expiry.tzinfo is None:
+                expiry = expiry.replace(tzinfo=timezone.utc)
+        else:
+            expiry = datetime.now(timezone.utc) + timedelta(seconds=3600)
         account = await user_repo.get_or_create_gmail_account(
             user_id=user["id"],
             email_address=gmail_address,

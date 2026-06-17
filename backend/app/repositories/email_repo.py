@@ -60,10 +60,16 @@ class EmailRepository(BaseRepository):
         response = self.db.table("emails").update(update_data).eq("id", email_id).execute()
         return response.data[0] if response.data else None
 
-    async def get_all_emails_by_account(self, account_id: str, category: str | None = None):
+    async def get_all_emails_by_account(self, account_id: str, category: str | None = None, search: str | None = None):
         query = self.db.table("emails").select("*").eq("account_id", account_id)
         if category and category.lower() != "all":
             query = query.eq("category", category)
+        if search:
+            # Perform case-insensitive search on subject and body_text using ilike
+            pct = "%"
+            pattern = f"{pct}{search}{pct}"
+            or_filter = f"subject.ilike.{pattern},body_text.ilike.{pattern}"
+            query = query.or_(or_filter)
         response = query.order("received_at", desc=True).execute()
         return response.data
 
@@ -99,3 +105,16 @@ class EmailRepository(BaseRepository):
                 "metadata": row["metadata"]
             })
         return formatted_results
+
+    async def search_by_keyword(self, account_id: str, keyword: str):
+        """Search emails by keyword in subject or body_text for a given account."""
+        pct = "%"
+        pattern = f"{pct}{keyword}{pct}"
+        or_filter = f"subject.ilike.{pattern},body_text.ilike.{pattern}"
+        response = self.db.table("emails")\
+            .select("*")\
+            .eq("account_id", account_id)\
+            .or_(or_filter)\
+            .order("received_at", desc=True)\
+            .execute()
+        return response.data

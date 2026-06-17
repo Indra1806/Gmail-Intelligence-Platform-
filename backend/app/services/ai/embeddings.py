@@ -10,7 +10,7 @@ class EmbeddingService:
         self.sandbox = False
         if not self.sandbox:
             genai.configure(api_key=settings.GEMINI_API_KEY)
-            self.model = 'models/text-embedding-004'
+            self.model = 'models/gemini-embedding-exp-03-07'
         
         # 1500 characters chunk size with 200 character overlap
         self.splitter = RecursiveCharacterTextSplitter(

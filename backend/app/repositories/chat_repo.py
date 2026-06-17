@@ -9,23 +9,14 @@ class ChatRepository(BaseRepository):
             "id": session_id,
             "user_id": user_id,
             "title": title or "New Chat Session",
-            "created_at": datetime.now(timezone.utc).isoformat() if not self.sandbox else datetime.now(timezone.utc),
-            "updated_at": datetime.now(timezone.utc).isoformat() if not self.sandbox else datetime.now(timezone.utc)
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
         }
         
-        if self.sandbox:
-            self.mock.chat_sessions[session_id] = session_data
-            return session_data
-            
         response = self.db.table("chat_sessions").insert(session_data).execute()
         return response.data[0] if response.data else None
 
     async def get_sessions_by_user(self, user_id: str) -> list[dict]:
-        if self.sandbox:
-            sessions = [s for s in self.mock.chat_sessions.values() if s["user_id"] == user_id]
-            sessions.sort(key=lambda x: x.get("created_at", datetime.min), reverse=True)
-            return sessions
-            
         response = self.db.table("chat_sessions")\
             .select("*")\
             .eq("user_id", user_id)\
@@ -34,17 +25,6 @@ class ChatRepository(BaseRepository):
         return response.data
 
     async def get_session_history(self, session_id: str, limit: int = 10) -> list[dict]:
-        if self.sandbox:
-            history = [m for m in self.mock.chat_messages if m["session_id"] == session_id]
-            history.sort(key=lambda x: x.get("created_at", datetime.min))
-            
-            class MessageWrapper(dict):
-                def __getattr__(self, name):
-                    if name in self:
-                        return self[name]
-                    raise AttributeError(f"No attribute {name}")
-            return [MessageWrapper(m) for m in history[-limit:]]
-
         response = self.db.table("chat_messages")\
             .select("*")\
             .eq("session_id", session_id)\
@@ -69,12 +49,8 @@ class ChatRepository(BaseRepository):
             "role": role,
             "content": content,
             "source_emails": source_emails,
-            "created_at": datetime.now(timezone.utc).isoformat() if not self.sandbox else datetime.now(timezone.utc)
+            "created_at": datetime.now(timezone.utc).isoformat()
         }
         
-        if self.sandbox:
-            self.mock.chat_messages.append(msg_data)
-            return msg_data
-            
         response = self.db.table("chat_messages").insert(msg_data).execute()
         return response.data[0] if response.data else None

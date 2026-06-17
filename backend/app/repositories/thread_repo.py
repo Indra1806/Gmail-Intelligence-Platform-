@@ -41,9 +41,14 @@ class ThreadRepository(BaseRepository):
         response = self.db.table("threads").update(update_data).eq("id", thread_id).execute()
         return response.data[0] if response.data else None
 
-    async def get_all_threads_by_account(self, account_id: str, category: str | None = None):
+    async def get_all_threads_by_account(self, account_id: str, category: str | None = None, search: str | None = None):
         query = self.db.table("threads").select("*").eq("account_id", account_id)
         if category and category.lower() != "all":
             query = query.eq("category", category)
+        if search:
+            pct = "%"
+            pattern = f"{pct}{search}{pct}"
+            or_filter = f"subject.ilike.{pattern},participant_emails.ilike.{pattern}"
+            query = query.or_(or_filter)
         response = query.order("last_message_at", desc=True).execute()
         return response.data

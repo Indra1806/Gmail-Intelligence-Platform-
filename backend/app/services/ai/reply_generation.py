@@ -10,8 +10,8 @@ class ReplyGenerationService:
         self.sandbox = False
         if not self.sandbox:
             genai.configure(api_key=settings.GEMINI_API_KEY)
-            # We use Gemini 1.5 Pro for reply generation to support detailed context reasoning
-            self.model = genai.GenerativeModel('gemini-1.5-pro')
+            # Use gemini-2.0-flash for reply generation
+            self.model = genai.GenerativeModel('gemini-2.0-flash')
 
     async def generate_reply(self, user_instruction: str, reply_to_email: str, thread_history: str) -> str:
         if self.sandbox:

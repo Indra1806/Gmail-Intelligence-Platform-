@@ -12,7 +12,7 @@ class ClassificationService:
         self.sandbox = False
         if not self.sandbox:
             genai.configure(api_key=settings.GEMINI_API_KEY)
-            self.model = genai.GenerativeModel('gemini-1.5-flash')
+            self.model = genai.GenerativeModel('gemini-2.0-flash')
 
     async def classify_email(self, sender: str, subject: str, snippet: str) -> EmailClassificationResult:
         if self.sandbox:
@@ -38,16 +38,19 @@ class ClassificationService:
             snippet=snippet[:1000]
         )
         
+        json_prompt = (
+            prompt
+            + "\n\nIMPORTANT: Respond ONLY with valid JSON in this exact format, no markdown:\n"
+            + '{"category": "<one of the permitted categories>", "confidence": <0.0-1.0>, "explanation": "<one sentence>"}'
+        )
         try:
-            # Enforce JSON output schema
-            response = await self.model.generate_content_async(
-                prompt,
-                generation_config=genai.GenerationConfig(
-                    response_mime_type="application/json",
-                    response_schema=EmailClassificationResult
-                )
-            )
-            result_dict = json.loads(response.text)
+            import re
+            response = await self.model.generate_content_async(json_prompt)
+            raw = response.text.strip()
+            # Strip markdown code fences if present
+            raw = re.sub(r'^```(?:json)?\s*', '', raw, flags=re.MULTILINE)
+            raw = re.sub(r'```\s*$', '', raw, flags=re.MULTILINE).strip()
+            result_dict = json.loads(raw)
             return EmailClassificationResult(**result_dict)
             
         except Exception as e:

@@ -10,7 +10,7 @@ class SummarizationService:
         self.sandbox = False
         if not self.sandbox:
             genai.configure(api_key=settings.GEMINI_API_KEY)
-            self.model = genai.GenerativeModel('gemini-1.5-flash')
+            self.model = genai.GenerativeModel('gemini-2.0-flash')
         self.MAX_CHARS = 100000
 
     def _truncate_text(self, text: str) -> str:
