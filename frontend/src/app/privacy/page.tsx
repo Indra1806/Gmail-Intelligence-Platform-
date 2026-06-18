@@ -26,8 +26,28 @@ const TwitterIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export default function PrivacyPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [showTermsModal, setShowTermsModal] = useState(false)
 
   const handleAuthRedirect = () => {
+    if (localStorage.getItem('OVO_terms_agreed') === 'true') {
+      const uid = localStorage.getItem('OVO_user_id')
+      const accId = localStorage.getItem('OVO_account_id')
+      const email = localStorage.getItem('OVO_email')
+      
+      if (uid && accId && email) {
+        window.location.href = `/dashboard?user_id=${uid}&account_id=${accId}&email=${email}`
+      } else {
+        window.location.href = '/auth/google'
+      }
+    } else {
+      setShowTermsModal(true)
+    }
+  }
+
+  const handleAcceptTerms = () => {
+    localStorage.setItem('OVO_terms_agreed', 'true')
+    setShowTermsModal(false)
+    
     const uid = localStorage.getItem('OVO_user_id')
     const accId = localStorage.getItem('OVO_account_id')
     const email = localStorage.getItem('OVO_email')
@@ -51,9 +71,7 @@ export default function PrivacyPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="w-8 h-8 rounded-xl bg-gradient-premium flex items-center justify-center shadow-lg shadow-violet-500/20 group-hover:scale-105 transition-transform duration-200">
-                <Sparkles className="w-4.5 h-4.5 text-white" />
-              </div>
+              <img src="/logo.png" alt="OVO Logo" className="w-8 h-8 rounded-xl object-contain shadow-lg shadow-violet-500/10 group-hover:scale-105 transition-transform duration-200" />
               <span className="font-bold tracking-tight text-lg bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400 font-mono">
                 OVO.AI
               </span>
@@ -230,9 +248,7 @@ export default function PrivacyPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-5 gap-8">
           <div className="col-span-2 space-y-4 pr-0 md:pr-10">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-xl bg-gradient-premium flex items-center justify-center shadow-md shadow-violet-500/20">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
+              <img src="/logo.png" alt="OVO Logo" className="w-7 h-7 rounded-xl object-contain shadow-md shadow-violet-500/10" />
               <span className="font-bold tracking-tight text-base text-white font-mono">
                 OVO.ai
               </span>
@@ -282,6 +298,54 @@ export default function PrivacyPage() {
           </div>
         </div>
       </footer>
+
+      {/* ── TERMS OF SERVICE CONSENT MODAL ── */}
+      <AnimatePresence>
+        {showTermsModal && (
+          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+            <div className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-900/95 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl flex flex-col gap-6 text-left relative overflow-hidden animate-fade-in-up">
+              
+              {/* Mesh Accent */}
+              <div className="absolute top-[-50%] left-[-50%] w-[100%] h-[100%] rounded-full bg-violet-500/5 blur-[50px] pointer-events-none" />
+
+              <div className="flex items-center gap-3">
+                <img src="/logo.png" alt="OVO Logo" className="w-10 h-10 rounded-xl object-contain shadow-lg shadow-violet-500/20" />
+                <div>
+                  <h3 className="text-sm sm:text-base font-extrabold text-white">Agree to OVO.AI Terms</h3>
+                  <p className="text-[10px] text-slate-500 font-mono mt-0.5">Required Action</p>
+                </div>
+              </div>
+
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                Before logging in or signing up, please review and accept our{' '}
+                <Link href="/terms" className="text-violet-400 hover:text-violet-300 font-semibold underline decoration-violet-500/30 transition">
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link href="/privacy" className="text-violet-400 hover:text-violet-300 font-semibold underline decoration-violet-500/30 transition">
+                  Privacy Policy
+                </Link>
+                . By clicking "Accept & Continue", you confirm your consent to these policies.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <button
+                  onClick={() => setShowTermsModal(false)}
+                  className="flex-1 py-3 px-4 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-slate-200 text-xs font-semibold transition cursor-pointer"
+                >
+                  Decline
+                </button>
+                <button
+                  onClick={handleAcceptTerms}
+                  className="flex-1 py-3 px-4 rounded-xl bg-gradient-premium text-white text-xs font-bold shadow-lg shadow-violet-500/25 hover:scale-[1.01] transition-transform active:scale-[0.99] cursor-pointer"
+                >
+                  Accept & Continue
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

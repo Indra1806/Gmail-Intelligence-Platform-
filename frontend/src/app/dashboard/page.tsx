@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { 
   Inbox, 
   Send, 
-  Radius, 
   RefreshCw, 
   Tag, 
   MessageSquare, 
@@ -350,9 +349,7 @@ export default function Dashboard() {
       {/* Sidebar Header */}
       <div className="flex items-center justify-between px-6 pt-6 pb-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-gradient-premium flex items-center justify-center shadow-lg shadow-indigo-500/20">
-            <Radius className="w-4 h-4 text-white" />
-          </div>
+          <img src="/logo.png" alt="OVO Logo" className="w-8 h-8 rounded-xl object-contain shadow-lg shadow-indigo-500/10" />
           <span className="font-extrabold tracking-widest text-sm bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 font-mono">
             OVO.AI
           </span>
@@ -493,18 +490,14 @@ export default function Dashboard() {
           </button>
           
           <div className="hidden lg:flex items-center gap-3">
-            <div className="w-7 h-7 rounded-xl bg-gradient-premium flex items-center justify-center shadow-md shadow-indigo-500/20">
-              <Radius className="w-3.5 h-3.5 text-white" />
-            </div>
+            <img src="/logo.png" alt="OVO Logo" className="w-7 h-7 rounded-xl object-contain shadow-md shadow-indigo-500/10" />
             <span className="font-extrabold tracking-widest text-xs bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 font-mono">
               OVO.AI
             </span>
           </div>
 
           <div className="lg:hidden flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-gradient-premium flex items-center justify-center">
-              <Radius className="w-3 h-3 text-white" />
-            </div>
+            <img src="/logo.png" alt="OVO Logo" className="w-6 h-6 rounded-lg object-contain" />
             <span className="font-bold text-xs bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 font-mono">
               OVO.AI
             </span>

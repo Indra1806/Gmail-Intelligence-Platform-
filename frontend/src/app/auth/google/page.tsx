@@ -4,6 +4,10 @@ import React, { useEffect } from 'react'
 
 export default function GoogleAuthRedirect() {
   useEffect(() => {
+    if (localStorage.getItem('OVO_terms_agreed') !== 'true') {
+      window.location.href = '/'
+      return
+    }
     const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
     const redirectUri = `${window.location.origin}/dashboard`
     window.location.href = `${apiBase}/auth/login?redirect_uri=${redirectUri}`
