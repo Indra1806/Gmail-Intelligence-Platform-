@@ -1329,8 +1329,8 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-600">
           <div>© 2026 OVO.AI. All rights reserved.</div>
           <div className="flex gap-4">
-            <span className="cursor-not-allowed">Privacy Policy</span>
-            <span className="cursor-not-allowed">Terms of Service</span>
+            <Link href="/privacy" className="hover:text-slate-300 transition">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-slate-300 transition">Terms of Service</Link>
           </div>
         </div>
       </footer>
