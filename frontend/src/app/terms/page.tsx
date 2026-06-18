@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { Sparkles, Menu, X, Lock, Layers } from 'lucide-react'
+import { Menu, X, Lock, Layers } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 // Custom Inline SVG Social Icons
@@ -169,7 +169,7 @@ export default function TermsPage() {
               1. Acceptance of Terms
             </h2>
             <p>
-              By accessing or using the services provided by OVO.AI ("OVO," "we," "us," or "our"), you agree to be bound by these Terms of Service. If you do not agree to these terms, you must not access or use the platform.
+              By accessing or using the services provided by OVO.AI (&quot;OVO,&quot; &quot;we,&quot; &quot;us,&quot; or &quot;our&quot;), you agree to be bound by these Terms of Service. If you do not agree to these terms, you must not access or use the platform.
             </p>
           </section>
 
@@ -179,7 +179,7 @@ export default function TermsPage() {
               2. Description of Service
             </h2>
             <p>
-              OVO.AI provides an intelligent workspace orchestration assistant that syncs, indexes, categorizes, and processes email records using advanced Large Language Models (LLMs) and vector search capabilities. The services are provided "AS IS" and subject to change or suspension at any time.
+              OVO.AI provides an intelligent workspace orchestration assistant that syncs, indexes, categorizes, and processes email records using advanced Large Language Models (LLMs) and vector search capabilities. The services are provided &quot;AS IS&quot; and subject to change or suspension at any time.
             </p>
           </section>
 
@@ -213,7 +213,7 @@ export default function TermsPage() {
             </p>
             <ul className="list-disc pl-6 space-y-1.5 text-slate-400">
               <li>Send spam, unsolicited advertisements, or bulk marketing communications.</li>
-              <li>Parse or crawl other users' workspace details or extract model weights.</li>
+              <li>Parse or crawl other users&apos; workspace details or extract model weights.</li>
               <li>Expose private user data in violation of privacy regulations.</li>
               <li>Attempt to bypass, disable, or reverse engineer any application safety filters or security protocols.</li>
             </ul>
@@ -235,7 +235,7 @@ export default function TermsPage() {
               7. Modifications to Terms
             </h2>
             <p>
-              We reserve the right to update or modify these Terms of Service at any time. We will notify you of any changes by updating the "Last Updated" date at the top of this page. Your continued use of OVO.AI after modifications are posted constitutes acceptance of those changes.
+              We reserve the right to update or modify these Terms of Service at any time. We will notify you of any changes by updating the &quot;Last Updated&quot; date at the top of this page. Your continued use of OVO.AI after modifications are posted constitutes acceptance of those changes.
             </p>
           </section>
 
@@ -324,7 +324,7 @@ export default function TermsPage() {
                 <Link href="/privacy" className="text-violet-400 hover:text-violet-300 font-semibold underline decoration-violet-500/30 transition">
                   Privacy Policy
                 </Link>
-                . By clicking "Accept & Continue", you confirm your consent to these policies.
+                . By clicking &quot;Accept &amp; Continue&quot;, you confirm your consent to these policies.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 pt-2">

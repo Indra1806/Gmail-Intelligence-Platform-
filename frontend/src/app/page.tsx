@@ -13,14 +13,10 @@ import {
   ArrowRight, 
   Check, 
   Star, 
-  Globe, 
   Lock, 
   Menu, 
   X, 
   Play, 
-  RefreshCw, 
-  CheckCircle, 
-  Eye, 
   ChevronDown, 
   Layers, 
   AlertCircle
@@ -104,7 +100,6 @@ export default function LandingPage() {
   // Interactive Simulator State
   const [sandboxInput, setSandboxInput] = useState('')
   const [sandboxLogs, setSandboxLogs] = useState<string[]>([])
-  const [sandboxResponse, setSandboxResponse] = useState('')
   const [isSandboxRunning, setIsSandboxRunning] = useState(false)
   const [sandboxSource, setSandboxSource] = useState('')
   const [typedSandboxResponse, setTypedSandboxResponse] = useState('')
@@ -113,7 +108,6 @@ export default function LandingPage() {
     if (isSandboxRunning || !inputVal.trim()) return
     setIsSandboxRunning(true)
     setSandboxLogs([])
-    setSandboxResponse('')
     setTypedSandboxResponse('')
     setSandboxSource('')
 
@@ -155,7 +149,6 @@ export default function LandingPage() {
           sourceName = 'ovo_intelligence_tutorial.eml'
         }
 
-        setSandboxResponse(finalReply)
         setSandboxSource(sourceName)
         
         // Typing effect
@@ -180,7 +173,7 @@ export default function LandingPage() {
     if (userId && accountId) {
       window.location.href = '/dashboard'
     } else {
-      setCheckingAuth(false)
+      setTimeout(() => setCheckingAuth(false), 0)
     }
   }, [])
 
@@ -189,7 +182,7 @@ export default function LandingPage() {
     if (!checkingAuth) {
       const consent = localStorage.getItem('OVO_cookie_consent')
       if (!consent) {
-        setShowCookieConsent(true)
+        setTimeout(() => setShowCookieConsent(true), 0)
       }
     }
   }, [checkingAuth])
@@ -309,11 +302,11 @@ export default function LandingPage() {
         transition={{ repeat: Infinity, duration: 9, ease: "easeInOut" }}
         className="absolute bottom-[40%] left-[2%] opacity-30 pointer-events-none bg-slate-900/50 border border-white/5 p-3 rounded-xl font-mono text-[9px] text-violet-300 hidden lg:block backdrop-blur-sm z-0"
       >
-        <p className="text-slate-500">// OVO AI Vector Embedding Index</p>
-        <p className="text-emerald-400">"message_id": "msg_90412"</p>
-        <p className="text-violet-400">"vector_emb": [0.0142, -0.9251, 0.4412]</p>
-        <p className="text-pink-400">"sec_tag": "aes_256_enc"</p>
-        <p className="text-blue-400">"rerank_score": 0.985</p>
+        <p className="text-slate-500">{`// OVO AI Vector Embedding Index`}</p>
+        <p className="text-emerald-400">&quot;message_id&quot;: &quot;msg_90412&quot;</p>
+        <p className="text-violet-400">&quot;vector_emb&quot;: [0.0142, -0.9251, 0.4412]</p>
+        <p className="text-pink-400">&quot;sec_tag&quot;: &quot;aes_256_enc&quot;</p>
+        <p className="text-blue-400">&quot;rerank_score&quot;: 0.985</p>
       </motion.div>
 
       <div className="absolute top-[22%] left-[45%] w-[120px] h-[120px] rounded-full border border-white/5 border-t-violet-500/25 animate-spin pointer-events-none opacity-40 z-0" style={{ animationDuration: '20s' }} />
@@ -617,7 +610,7 @@ export default function LandingPage() {
               <span>Interactive Simulator</span>
             </div>
             <h3 className="text-2xl sm:text-4xl font-extrabold tracking-tight mb-4 text-white text-center">
-              Try OVO's AI Engine Sandbox
+              Try OVO&apos;s AI Engine Sandbox
             </h3>
             <p className="text-slate-400 text-xs sm:text-sm leading-relaxed text-center">
               Query our simulated semantic inbox index. Click a preset prompt or type your own, and watch our pipeline process and stream back Gemini responses.
@@ -861,7 +854,7 @@ export default function LandingPage() {
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveShowcaseTab(tab.id as any)}
+              onClick={() => setActiveShowcaseTab(tab.id as 'inbox' | 'summary' | 'categories' | 'chat')}
               className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
                 activeShowcaseTab === tab.id 
                   ? 'bg-violet-600 text-white shadow shadow-violet-500/20' 
@@ -1084,7 +1077,7 @@ export default function LandingPage() {
                     <Star key={idx} className="w-4 h-4 fill-current" />
                   ))}
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed italic mb-6">"{testi.quote}"</p>
+                <p className="text-xs text-slate-300 leading-relaxed italic mb-6">&quot;{testi.quote}&quot;</p>
               </div>
               <div className="flex items-center gap-3">
                 <div className={`w-8 h-8 rounded-full ${testi.avatarColor} flex items-center justify-center text-xs text-white font-bold`}>
@@ -1452,7 +1445,7 @@ export default function LandingPage() {
                 <Link href="/privacy" className="text-violet-400 hover:text-violet-300 font-semibold underline decoration-violet-500/30 transition">
                   Privacy Policy
                 </Link>
-                . By clicking "Accept & Continue", you confirm your consent to these policies.
+                . By clicking &quot;Accept &amp; Continue&quot;, you confirm your consent to these policies.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 pt-2">

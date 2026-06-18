@@ -958,7 +958,7 @@ export default function Dashboard() {
                           onClick={() => setChatQuery(q)}
                           className="w-full text-left p-3.5 rounded-xl border border-neutral-850 bg-neutral-900/30 text-xs text-neutral-400 hover:bg-neutral-900/50 hover:border-indigo-500/30 transition shadow-sm cursor-pointer"
                         >
-                          "{q}"
+                          &quot;{q}&quot;
                         </button>
                       ))}
                     </div>

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { Sparkles, Menu, X, Lock, Layers } from 'lucide-react'
+import { Menu, X, Lock, Layers } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 // Custom Inline SVG Social Icons
@@ -208,7 +208,7 @@ export default function PrivacyPage() {
               4. How We Use Your Data
             </h2>
             <p>
-              We process your synced emails solely to deliver our platform's automated capabilities:
+              We process your synced emails solely to deliver our platform&apos;s automated capabilities:
             </p>
             <ul className="list-disc pl-6 space-y-1.5 text-slate-400">
               <li>Classifying emails into smart categories (Work, Finance, Job, Personal, etc.).</li>
@@ -226,7 +226,7 @@ export default function PrivacyPage() {
               5. Data Retention & Deletion
             </h2>
             <p>
-              Your data belongs to you. You can revoke OVO's Google OAuth permissions at any time. When you click **Sign Out** or choose to delete your account, we wipe your synced emails, threads, embeddings, and chat sessions from our databases.
+              Your data belongs to you. You can revoke OVO&apos;s Google OAuth permissions at any time. When you click **Sign Out** or choose to delete your account, we wipe your synced emails, threads, embeddings, and chat sessions from our databases.
             </p>
           </section>
 
@@ -325,7 +325,7 @@ export default function PrivacyPage() {
                 <Link href="/privacy" className="text-violet-400 hover:text-violet-300 font-semibold underline decoration-violet-500/30 transition">
                   Privacy Policy
                 </Link>
-                . By clicking "Accept & Continue", you confirm your consent to these policies.
+                . By clicking &quot;Accept &amp; Continue&quot;, you confirm your consent to these policies.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
