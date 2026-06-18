@@ -24,7 +24,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+/lib/
 lib64/
 parts/
 sdist/
@@ -72,3 +72,20 @@ yarn-error.log*
 *.jpg
 *.jpeg
 *.gif
+
+# Implementation Plans & Documentation Specs
+/Architecture.md
+/Backend_Architecture.md
+/Chat_Agent_RAG_Implementation.md
+/Classification_Implementation.md
+/Composition_Implementation.md
+/Database_Design.md
+/Frontend_Implementation.md
+/NVIDIA_NIM_Integration.md
+/Summarization_Implementation.md
+/Thread_Reply_Implementation.md
+/production_deployment_steps.md
+/implementation_plan.md
+/walkthrough.md
+/task.md
+

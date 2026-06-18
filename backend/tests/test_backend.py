@@ -100,7 +100,7 @@ class MockEmailRepo:
                 return self.get(name)
         return [EmailWrapper(e) for e in self.emails.values() if e["thread_id"] == thread_id]
 
-    async def get_all_emails_by_account(self, account_id: str, category: str | None = None):
+    async def get_all_emails_by_account(self, account_id: str, category: str | None = None, search: str | None = None):
         return list(self.emails.values())
 
 
@@ -117,7 +117,7 @@ class MockThreadRepo:
     async def get_by_id(self, thread_id: str):
         return self.threads.get(thread_id)
 
-    async def get_all_threads_by_account(self, account_id: str, category: str | None = None):
+    async def get_all_threads_by_account(self, account_id: str, category: str | None = None, search: str | None = None):
         return list(self.threads.values())
 
 
@@ -193,7 +193,7 @@ app.dependency_overrides[get_gmail_send_service] = lambda: mock_send_svc
 # --- Unit Tests ---
 
 def test_health_check():
-    response = client.get("/")
+    response = client.get("/health")
     assert response.status_code == 200
     assert response.json()["status"] == "healthy"
     assert response.json()["sandbox_mode"] is False
