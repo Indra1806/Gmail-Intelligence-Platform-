@@ -111,7 +111,8 @@ class MockThreadRepo:
             "00000000-0000-0000-0000-00000000000a": {
                 "id": "00000000-0000-0000-0000-00000000000a",
                 "account_id": "00000000-0000-0000-0000-000000000002",
-                "subject": "Project Proposal - OVO Launch"
+                "subject": "Project Proposal - OVO Launch",
+                "gmail_thread_id": "thread_111"
             }
         }
         

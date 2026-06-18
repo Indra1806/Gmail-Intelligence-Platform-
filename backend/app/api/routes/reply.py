@@ -4,7 +4,7 @@ from app.models.domain import ReplyRequest
 from app.services.thread_context_service import ThreadContextService
 from app.services.ai.reply_generation import ReplyGenerationService
 from app.services.gmail_send_service import GmailSendService
-from app.api.dependencies import get_reply_generation_service, get_gmail_send_service, get_email_repo
+from app.api.dependencies import get_reply_generation_service, get_gmail_send_service, get_email_repo, get_thread_repo
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -14,7 +14,8 @@ async def send_reply(
     request: ReplyRequest,
     ai_svc: ReplyGenerationService = Depends(get_reply_generation_service),
     send_svc: GmailSendService = Depends(get_gmail_send_service),
-    email_repo = Depends(get_email_repo)
+    email_repo = Depends(get_email_repo),
+    thread_repo = Depends(get_thread_repo)
 ):
     """Generates and sends a thread-aware response back to Gmail while maintaining thread grouping."""
     try:
@@ -32,10 +33,10 @@ async def send_reply(
         )
         
         # 3. Transmit reply back to Gmail API
-        emails_list = await email_repo.get_by_thread_id(request.thread_id)
-        if not emails_list:
-            raise ValueError(f"No synchronized emails found for thread {request.thread_id}")
-        gmail_thread_id = emails_list[0]["gmail_thread_id"]
+        thread = await thread_repo.get_by_id(request.thread_id)
+        if not thread:
+            raise ValueError(f"No synchronized thread found for id {request.thread_id}")
+        gmail_thread_id = thread["gmail_thread_id"]
 
         result = await send_svc.send_thread_reply(
             account_id=request.account_id,

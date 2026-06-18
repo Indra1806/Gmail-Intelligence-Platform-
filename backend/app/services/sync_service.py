@@ -236,12 +236,25 @@ class SyncService:
 
         # 5. Enqueue AI Processing tasks (background)
         if background_tasks:
-            from app.api.dependencies import get_email_processing_service, get_classification_service, get_chat_agent_service
+            from app.services.email_processing_service import EmailProcessingService
+            from app.services.ai.summarization import SummarizationService
+            from app.services.ai.classification import ClassificationService
+            from app.repositories.chat_repo import ChatRepository
+            from app.services.chat_agent import ChatAgentService
+            from app.services.rag.retriever import RobustRAGRetriever
+            from app.services.ai.embeddings import EmbeddingService
+            from app.services.ai.nim_reranker import NIMRerankingService
+
+            # Instantiate services manually to avoid Depends default values bug in background tasks
+            summarizer_svc = SummarizationService()
+            processing_svc = EmailProcessingService(self.email_repo, self.thread_repo, summarizer_svc)
+            classification_svc = ClassificationService()
             
-            # Create services dynamically to pass to background tasks
-            processing_svc = get_email_processing_service(self.email_repo, self.thread_repo)
-            classification_svc = get_classification_service()
-            chat_agent_svc = get_chat_agent_service(self.email_repo)
+            chat_repo = ChatRepository(self.email_repo.db)
+            embedder = EmbeddingService()
+            nim_reranker = NIMRerankingService()
+            retriever = RobustRAGRetriever(self.email_repo, embedder, nim_reranker)
+            chat_agent_svc = ChatAgentService(retriever, chat_repo)
 
             background_tasks.add_task(processing_svc.process_new_email, saved_email["id"])
             background_tasks.add_task(self._process_classification, saved_email["id"], classification_svc)
