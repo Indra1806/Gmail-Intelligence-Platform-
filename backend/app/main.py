@@ -41,7 +41,7 @@ def create_app() -> FastAPI:
         return {
             "status": "healthy",
             "project": settings.PROJECT_NAME,
-            "sandbox_mode": False
+            "sandbox_mode": settings.SANDBOX_MODE
         }
 
     logger.info("FastAPI Application Scaffolding Initialized.")

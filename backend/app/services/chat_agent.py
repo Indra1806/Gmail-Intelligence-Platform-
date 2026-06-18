@@ -11,7 +11,7 @@ class ChatAgentService:
     def __init__(self, retriever: RobustRAGRetriever, chat_repo: ChatRepository):
         self.retriever = retriever
         self.chat_repo = chat_repo
-        self.sandbox = False
+        self.sandbox = settings.SANDBOX_MODE
         if not self.sandbox:
             genai.configure(api_key=settings.GEMINI_API_KEY)
             self.model = genai.GenerativeModel('gemini-2.0-flash')
@@ -22,7 +22,7 @@ class ChatAgentService:
             text_val = doc["metadata"].get("text", doc.get("body_text", ""))
             block = (
                 f"--- BEGIN SOURCE ---\n"
-                f"Source ID: {doc['email_id']}\n"
+                f"Source ID: {doc['thread_id']}\n"
                 f"Date: {doc['received_at']}\n"
                 f"Sender: {doc['from_email']}\n"
                 f"Subject: {doc['subject']}\n"
@@ -39,7 +39,7 @@ class ChatAgentService:
         # 1. Retrieve Context
         docs = await self.retriever.retrieve_context(account_id, query)
         context_string = await self._format_context(docs)
-        source_email_ids = list(set([d['email_id'] for d in docs]))
+        source_thread_ids = list(set([d['thread_id'] for d in docs]))
 
         # 2. Gather Conversational Memory
         history = await self.chat_repo.get_session_history(session_id, limit=6)
@@ -52,24 +52,33 @@ class ChatAgentService:
             # Simple rule-based mock answers matching the seeded data
             text_query = query.lower()
             if "proposal" in text_query or "launch" in text_query or "spec" in text_query:
+                # Use thread ID in sandbox mocks corresponding to the seeded thread
+                sandbox_thread_id = "00000000-0000-0000-0000-000000000002"
+                if docs:
+                    sandbox_thread_id = docs[0]["thread_id"]
                 answer = (
                     "Based on your emails, your manager sent a project proposal asking for the Gmail sync "
                     "and summarization specifications, stating it needs to be deployed by Friday "
-                    "[Source: 00000000-0000-0000-0000-000000000101]. You replied that you are building the backend "
+                    f"[Source: {sandbox_thread_id}]. You replied that you are building the backend "
                     "using FastAPI, Next.js, and Supabase, which supports automated categorization "
-                    "and semantic chat [Source: 00000000-0000-0000-0000-000000000102]."
+                    f"and semantic chat [Source: {sandbox_thread_id}]."
                 )
-                cited = ["00000000-0000-0000-0000-000000000101", "00000000-0000-0000-0000-000000000102"]
+                cited = [sandbox_thread_id]
             elif "invoice" in text_query or "nvidia" in text_query or "billing" in text_query or "credit" in text_query:
+                sandbox_thread_id = "00000000-0000-0000-0000-000000000002"
+                if len(docs) > 1:
+                    sandbox_thread_id = docs[1]["thread_id"]
+                elif docs:
+                    sandbox_thread_id = docs[0]["thread_id"]
                 answer = (
                     "You have an invoice from NVIDIA NIM for credits. Invoice #1024 is for a monthly fee "
-                    "of $150.00, which is due by the end of the month [Source: 00000000-0000-0000-0000-000000000103]."
+                    f"of $150.00, which is due by the end of the month [Source: {sandbox_thread_id}]."
                 )
-                cited = ["00000000-0000-0000-0000-000000000103"]
+                cited = [sandbox_thread_id]
             else:
                 # Fallback sandbox answer incorporating the first retrieved document
-                if source_email_ids:
-                    first_id = source_email_ids[0]
+                if source_thread_ids:
+                    first_id = source_thread_ids[0]
                     first_doc = docs[0]
                     answer = (
                         f"I found a relevant email from {first_doc['from_email']} about '{first_doc['subject']}' "
@@ -104,7 +113,7 @@ class ChatAgentService:
             citation_regex = re.compile(r'\[Source:\s*([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\]', re.IGNORECASE)
             cited_uuids = list(set(citation_regex.findall(answer)))
             # Ensure cited UUIDs belong to the retrieved document set to prevent hallucination
-            actual_source_ids = [uid for uid in cited_uuids if uid in [d['email_id'] for d in docs]]
+            actual_source_ids = [uid for uid in cited_uuids if uid in [d['thread_id'] for d in docs]]
             
             # Save messages
             await self.chat_repo.save_message(session_id, "user", query, [])

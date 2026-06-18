@@ -257,9 +257,7 @@ class SyncService:
             snippet=email.snippet or email.body_text
         )
         await self.email_repo.update(email_id, {
-            "category": result.category,
-            "category_confidence": result.confidence,
-            "category_explanation": result.explanation
+            "category": result.category
         })
         
         # Also sync thread category if thread category is default/empty
@@ -320,11 +318,17 @@ class SyncService:
 
     def _decode_body(self, data: str) -> str:
         """Decodes URLsafe Base64 encoded email MIME text."""
+        if not data:
+            return ""
+        # Restore padding if missing
+        missing_padding = len(data) % 4
+        if missing_padding:
+            data += '=' * (4 - missing_padding)
         try:
-            return base64.urlsafe_b64encode(base64.urlsafe_b64decode(data)).decode("utf-8")
+            return base64.urlsafe_b64decode(data).decode("utf-8", errors="ignore")
         except Exception:
             try:
-                # Direct decode
+                # Direct decode using ASCII encoded input
                 return base64.urlsafe_b64decode(data.encode("ASCII")).decode("utf-8", errors="ignore")
             except Exception:
                 return ""

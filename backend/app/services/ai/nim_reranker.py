@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 class NIMRerankingService:
     def __init__(self):
-        self.sandbox = False
+        self.sandbox = settings.SANDBOX_MODE
         self.api_key = settings.NVIDIA_NIM_API_KEY
         self.url = "https://integrate.api.nvidia.com/v1/rerank"
         self.model = "nvidia/nv-rerankqa-mistral-4b-v3"

@@ -33,7 +33,7 @@ Designed for performance and data isolation, the platform uses a decoupled Next.
 *   **Thread-Aware Composition & Send**: Drafts context-rich emails and thread replies, automatically injecting RFC 2822 standard headers (`In-Reply-To` and `References`) to group replies in native Gmail threads.
 *   **Clickable Source Attributions**: RAG chat queries extract only the source UUIDs cited in the generated text, rendering citation tags in the UI that open corresponding message timeline panes.
 
----
+
 
 ## 🏛️ Monorepo Directory Layout
 
@@ -67,7 +67,7 @@ OVO/
     └── Dockerfile
 ```
 
----
+
 
 ## 🛠️ Sandbox Mode (Offline Mock Environment)
 
@@ -77,7 +77,7 @@ To allow developers to evaluate the codebase instantly without needing Google Cl
 *   It provisions mock credentials, simulates Gmail synchronizations using built-in timeline data, and returns rule-based classifications and summaries.
 *   *This ensures a fully functional, zero-dependency local demonstration.*
 
----
+
 
 ## 🚀 Installation & Local Run
 
@@ -89,8 +89,8 @@ To allow developers to evaluate the codebase instantly without needing Google Cl
 2.  Create and activate a Python virtual environment:
     ```bash
     python -m venv venv
-    # On Windows:
-    .\venv\Scripts\activate
+    # On Windows: - bash
+    source ./venv/Scripts/activate
     # On macOS/Linux:
     source venv/bin/activate
     ```

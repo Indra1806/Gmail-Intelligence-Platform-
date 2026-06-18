@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = "your-gemini-key"
     NVIDIA_NIM_API_KEY: str = "your-nim-key"
 
+    # Sandbox Mock Mode Setting
+    SANDBOX_MODE: bool = False
+
     # Token Storage Symmetric Encryption Key (32-byte base64-encoded)
     ENCRYPTION_KEY: str = "t-Z8o8WfQ6S8Z1Z_YcR-rT4n2Vp6x9z_3b5f7g9aBcD="
 

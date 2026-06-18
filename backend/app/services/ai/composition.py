@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class CompositionService:
     def __init__(self):
-        self.sandbox = False
+        self.sandbox = settings.SANDBOX_MODE
         if not self.sandbox:
             genai.configure(api_key=settings.GEMINI_API_KEY)
             self.model = genai.GenerativeModel('gemini-2.0-flash')

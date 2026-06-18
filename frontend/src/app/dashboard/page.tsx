@@ -11,6 +11,7 @@ import {
   MessageSquare, 
   PenTool, 
   CheckCircle,
+  Check,
   Clock,
   ExternalLink,
   SendHorizontal,
@@ -102,6 +103,7 @@ export default function Dashboard() {
   const [searchQuery, setSearchQuery]     = useState('')
   const [viewMode, setViewMode]           = useState<'inbox' | 'chat'>('inbox')
   const [mobilePaneView, setMobilePaneView] = useState<'list' | 'detail'>('list') // mobile inbox sub-view
+  const [copyFeedback, setCopyFeedback] = useState(false)
 
   // Data state
   const [threads, setThreads]                   = useState<Thread[]>([])
@@ -258,6 +260,12 @@ export default function Dashboard() {
     finally { setIsComposing(false) }
   }
 
+  const handleCopyDraft = (text: string) => {
+    navigator.clipboard.writeText(text)
+    setCopyFeedback(true)
+    setTimeout(() => setCopyFeedback(false), 2000)
+  }
+
   const handleReplySubmit = async () => {
     if (!replyInstruction.trim() || !activeThread) return
     setIsReplying(true)
@@ -322,40 +330,43 @@ export default function Dashboard() {
 
   if (!mounted || !userId || !accountId) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-950 text-white font-sans">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm font-medium text-slate-400">Loading your workspace...</p>
+      <div className="flex items-center justify-center min-h-screen bg-neutral-950 text-white font-sans">
+        <div className="flex flex-col items-center gap-5">
+          <div className="relative w-12 h-12">
+            <div className="absolute inset-0 border-4 border-indigo-500/20 rounded-full" />
+            <div className="absolute inset-0 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+          <p className="text-xs font-semibold tracking-wider text-neutral-400 uppercase">Loading OVO Workspace...</p>
         </div>
       </div>
     )
   }
 
-  // ── SIDEBAR CONTENT (shared between desktop and mobile drawer) ────────────
+  // ── SIDEBAR CONTENT ────────────────────────────────────────────────────────
 
   const SidebarContent = ({ onClose }: { onClose?: () => void }) => (
-    <div className="flex flex-col h-full bg-white/60 dark:bg-slate-950/80 backdrop-blur-xl border-r border-slate-200 dark:border-slate-800/60">
+    <div className="flex flex-col h-full bg-neutral-900/40 dark:bg-neutral-950/70 backdrop-blur-xl border-r border-neutral-800/40">
       
-      {/* Sidebar header (mobile has close button) */}
-      <div className="flex items-center justify-between px-4 pt-5 pb-3">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-premium flex items-center justify-center shadow-md shadow-blue-500/20">
+      {/* Sidebar Header */}
+      <div className="flex items-center justify-between px-6 pt-6 pb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-gradient-premium flex items-center justify-center shadow-lg shadow-indigo-500/20">
             <Radius className="w-4 h-4 text-white" />
           </div>
-          <span className="font-bold tracking-wider text-base bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-pink-500 font-mono">
+          <span className="font-extrabold tracking-widest text-sm bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 font-mono">
             OVO.AI
           </span>
         </div>
         {onClose && (
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-slate-200/70 dark:hover:bg-slate-800/70 transition text-slate-500">
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-neutral-800/50 transition text-neutral-400 hover:text-white">
             <X className="w-4 h-4" />
           </button>
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto px-3 pb-3 space-y-5">
+      <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-6 scrollbar-none">
         
-        {/* Compose button */}
+        {/* Compose Button */}
         <button
           id="compose-btn"
           onClick={() => {
@@ -364,27 +375,27 @@ export default function Dashboard() {
             setComposeOpen(true)
             onClose?.()
           }}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-premium text-white font-semibold text-sm shadow-lg hover:shadow-blue-500/30 hover:scale-[1.01] transition-all active:scale-[0.99]"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-premium text-white font-bold text-xs shadow-lg hover:shadow-indigo-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
         >
-          <PenTool className="w-4 h-4" />
+          <PenTool className="w-3.5 h-3.5" />
           Compose Assistant
         </button>
 
-        {/* Views */}
+        {/* Navigation Views */}
         <div>
-          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-widest px-2 mb-2 uppercase">Views</p>
-          <div className="space-y-0.5">
+          <p className="text-[10px] font-bold text-neutral-500 tracking-widest px-2.5 mb-2 uppercase">Views</p>
+          <div className="space-y-1">
             {([
-              { id: 'inbox', label: 'Inbox Workspace', Icon: Inbox },
-              { id: 'chat',  label: 'AI RAG Chat',     Icon: MessageSquare },
+              { id: 'inbox', label: 'Smart Inbox', Icon: Inbox },
+              { id: 'chat',  label: 'AI Chat RAG', Icon: MessageSquare },
             ] as const).map(({ id, label, Icon }) => (
               <button
                 key={id}
                 onClick={() => { setViewMode(id); onClose?.() }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition-all border cursor-pointer ${
                   viewMode === id
-                    ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shadow-sm'
-                    : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/50 hover:text-slate-800 dark:hover:text-slate-200'
+                    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20 shadow-md shadow-indigo-500/5'
+                    : 'text-neutral-400 border-transparent hover:bg-neutral-900/60 hover:text-neutral-200'
                 }`}
               >
                 <Icon className="w-4 h-4 shrink-0" />
@@ -394,11 +405,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Categories (inbox only) */}
+        {/* Categories Navigation */}
         {viewMode === 'inbox' && (
           <div>
-            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-widest px-2 mb-2 uppercase">Categories</p>
-            <div className="space-y-0.5">
+            <p className="text-[10px] font-bold text-neutral-500 tracking-widest px-2.5 mb-2 uppercase">Inbox Tabs</p>
+            <div className="space-y-1">
               {CATEGORIES.map(cat => (
                 <button
                   key={cat}
@@ -408,14 +419,16 @@ export default function Dashboard() {
                     setActiveThreadDetails(null)
                     onClose?.()
                   }}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all border cursor-pointer ${
                     selectedCategory === cat
-                      ? 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 shadow-sm'
-                      : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100/60 dark:hover:bg-slate-800/30 hover:text-slate-800 dark:hover:text-slate-200'
+                      ? 'bg-neutral-900 border-neutral-800 text-neutral-200 shadow-sm'
+                      : 'text-neutral-400 border-transparent hover:bg-neutral-900/30 hover:text-neutral-200'
                   }`}
                 >
-                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${getDot(cat)}`} />
-                  {cat}
+                  <div className="flex items-center gap-2.5">
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${getDot(cat)}`} />
+                    {cat}
+                  </div>
                 </button>
               ))}
             </div>
@@ -423,24 +436,21 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* User Profile Card (bottom of sidebar) */}
-      <div className="p-3 border-t border-slate-200 dark:border-slate-800/60">
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/60">
-          {/* Avatar */}
-          <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-md ${getAvatarClass(userEmail)}`}>
+      {/* Profile Bar */}
+      <div className="p-4 border-t border-neutral-800/40">
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-neutral-900/30 border border-neutral-800/40">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-md ${getAvatarClass(userEmail)}`}>
             {getInitials(userEmail)}
           </div>
-          {/* Name & email */}
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate">{getUsername(userEmail)}</p>
-            <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate font-mono">{userEmail}</p>
+            <p className="text-xs font-bold text-neutral-300 truncate">{getUsername(userEmail)}</p>
+            <p className="text-[10px] text-neutral-500 truncate font-mono">{userEmail}</p>
           </div>
-          {/* Sign out */}
           <button
             id="signout-sidebar-btn"
             onClick={handleLogout}
             title="Sign Out"
-            className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition"
+            className="p-2 rounded-xl text-neutral-500 hover:text-rose-400 hover:bg-rose-500/5 transition cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
           </button>
@@ -449,16 +459,16 @@ export default function Dashboard() {
     </div>
   )
 
-  // ── MAIN DASHBOARD ────────────────────────────────────────────────────────
+  // ── MAIN DASHBOARD CONTAINER ────────────────────────────────────────────────
 
   return (
-    <div className="flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans min-h-screen h-screen overflow-hidden relative bg-gradient-mesh">
+    <div className="flex flex-col bg-neutral-950 text-neutral-200 font-sans min-h-screen h-screen overflow-hidden relative bg-grid-pattern">
 
-      {/* Background blobs */}
-      <div className="absolute top-[-15%] left-[-5%] w-[45%] h-[45%] rounded-full bg-blue-500/8 blur-[100px] pointer-events-none animate-pulse-slow" />
-      <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] rounded-full bg-pink-500/8 blur-[100px] pointer-events-none animate-pulse-slow" />
+      {/* Mesh Glow Background */}
+      <div className="absolute top-[-10%] left-[-5%] w-[45%] h-[45%] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none animate-pulse-slow" />
+      <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] rounded-full bg-purple-500/5 blur-[120px] pointer-events-none animate-pulse-slow" />
 
-      {/* ── Mobile nav overlay ─────────────────────────────────────────────── */}
+      {/* Mobile Sidebar overlay */}
       {isMobileNavOpen && (
         <>
           <div className="mobile-sidebar-overlay lg:hidden" onClick={() => setMobileNavOpen(false)} />
@@ -468,111 +478,73 @@ export default function Dashboard() {
         </>
       )}
 
-      {/* ── Top Header ─────────────────────────────────────────────────────── */}
-      <header className="h-14 flex items-center justify-between px-4 border-b border-slate-200 dark:border-slate-800/80 backdrop-blur-xl bg-white/60 dark:bg-slate-900/60 sticky top-0 z-40 shrink-0">
+      {/* Top Navigation Header */}
+      <header className="h-14 flex items-center justify-between px-6 border-b border-neutral-850 backdrop-blur-xl bg-neutral-950/60 sticky top-0 z-40 shrink-0">
         
-        {/* Left: hamburger (mobile) + logo */}
-        <div className="flex items-center gap-3">
+        {/* Left: Mobile Trigger & OVO Brand */}
+        <div className="flex items-center gap-4">
           <button
             id="mobile-menu-btn"
             onClick={() => setMobileNavOpen(true)}
-            className="lg:hidden p-2 rounded-lg hover:bg-slate-200/70 dark:hover:bg-slate-800/70 transition text-slate-600 dark:text-slate-300"
+            className="lg:hidden p-2 rounded-xl hover:bg-neutral-900 transition text-neutral-400 hover:text-white"
             aria-label="Open navigation"
           >
-            <Menu className="w-5 h-5" />
+            <Menu className="w-4 h-4" />
           </button>
-          <div className="hidden lg:flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-premium flex items-center justify-center shadow-md shadow-blue-500/20">
-              <Radius className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-bold tracking-wider text-base bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-pink-500 font-mono">
-              OVO.AI
-            </span>
-          </div>
-          {/* Mobile: just the logo icon */}
-          <div className="lg:hidden flex items-center gap-2">
-            <div className="w-7 h-7 rounded-xl bg-gradient-premium flex items-center justify-center shadow">
+          
+          <div className="hidden lg:flex items-center gap-3">
+            <div className="w-7 h-7 rounded-xl bg-gradient-premium flex items-center justify-center shadow-md shadow-indigo-500/20">
               <Radius className="w-3.5 h-3.5 text-white" />
             </div>
-            <span className="font-bold text-sm bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-pink-500 font-mono">
+            <span className="font-extrabold tracking-widest text-xs bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 font-mono">
               OVO.AI
             </span>
           </div>
 
-          {/* Live badge */}
-          <span className="hidden sm:flex text-[9px] px-2 py-0.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-500 font-mono font-bold items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            LIVE
+          <div className="lg:hidden flex items-center gap-2">
+            <div className="w-6 h-6 rounded-lg bg-gradient-premium flex items-center justify-center">
+              <Radius className="w-3 h-3 text-white" />
+            </div>
+            <span className="font-bold text-xs bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 font-mono">
+              OVO.AI
+            </span>
+          </div>
+
+          <span className="flex text-[9px] px-2 py-0.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 font-mono font-bold items-center gap-1.5 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+            SANDBOX ENGINE
           </span>
         </div>
 
-        {/* Right: actions */}
-        <div className="flex items-center gap-2">
-          {/* Sync button — hidden on very small screens */}
+        {/* Right: Sync & Utilities */}
+        <div className="flex items-center gap-3">
           <button
             id="sync-btn"
             onClick={handleSync}
             disabled={isSyncing}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700/80 bg-white/50 dark:bg-slate-800/40 text-xs hover:bg-slate-100 dark:hover:bg-slate-800/90 transition disabled:opacity-50 text-slate-700 dark:text-slate-300 font-medium"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-800 bg-neutral-900/40 text-xs hover:bg-neutral-800 transition disabled:opacity-50 text-neutral-300 font-bold cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-blue-500 ${isSyncing ? 'animate-spin' : ''}`} />
-            <span className="hidden md:inline">{isSyncing ? 'Syncing...' : 'Sync'}</span>
+            <RefreshCw className={`w-3.5 h-3.5 text-indigo-400 ${isSyncing ? 'animate-spin' : ''}`} />
+            <span>{isSyncing ? 'Syncing...' : 'Sync'}</span>
           </button>
 
-          <div className="hidden sm:block h-5 w-px bg-slate-200 dark:bg-slate-800" />
+          <div className="h-4 w-px bg-neutral-800" />
 
-          {/* Theme switcher */}
-          <div className="relative">
-            <button
-              id="theme-btn"
-              onClick={() => { setIsThemeOpen(!isThemeOpen); setIsProfileOpen(false) }}
-              className="flex items-center justify-center p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/40 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/90 transition"
-              aria-label="Toggle Theme"
-            >
-              {theme === 'light' ? <Sun className="w-4 h-4 text-amber-500" /> :
-               theme === 'dark'  ? <Moon className="w-4 h-4 text-blue-400" /> :
-                                   <Monitor className="w-4 h-4" />}
-            </button>
-            {isThemeOpen && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setIsThemeOpen(false)} />
-                <div className="absolute right-0 mt-2 w-32 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg p-1.5 shadow-xl z-50 animate-fade-in-up">
-                  {([
-                    { val: 'light' as const, label: 'Light', Icon: Sun, cls: 'text-amber-500' },
-                    { val: 'dark'  as const, label: 'Dark',  Icon: Moon, cls: 'text-blue-400' },
-                    { val: 'system'as const, label: 'System',Icon: Monitor, cls: '' },
-                  ]).map(({ val, label, Icon, cls }) => (
-                    <button
-                      key={val}
-                      onClick={() => { setTheme(val); setIsThemeOpen(false) }}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
-                        theme === val ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/40'
-                      }`}
-                    >
-                      <Icon className={`w-3.5 h-3.5 ${cls}`} />
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Profile button */}
+          {/* User Account Button */}
           <div className="relative">
             <button
               id="profile-btn"
               onClick={() => { setIsProfileOpen(!isProfileOpen); setIsThemeOpen(false) }}
-              className={`flex items-center gap-2 pl-1 pr-3 py-1 rounded-xl border transition ${
+              className={`flex items-center gap-2 pl-1 pr-3 py-1 rounded-xl border transition cursor-pointer ${
                 isProfileOpen
-                  ? 'border-blue-500/40 bg-blue-50/80 dark:bg-blue-950/30'
-                  : 'border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/80'
+                  ? 'border-indigo-500/40 bg-indigo-500/5'
+                  : 'border-neutral-800 bg-neutral-900/40 hover:bg-neutral-800/80'
               }`}
             >
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white font-bold text-xs shadow ${getAvatarClass(userEmail)}`}>
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white font-bold text-[10px] shadow ${getAvatarClass(userEmail)}`}>
                 {getInitials(userEmail)}
               </div>
-              <span className="hidden md:block text-xs font-semibold text-slate-700 dark:text-slate-200 max-w-[100px] truncate">
+              <span className="hidden md:block text-[11px] font-semibold text-neutral-300 max-w-[100px] truncate">
                 {getUsername(userEmail)}
               </span>
             </button>
@@ -580,40 +552,40 @@ export default function Dashboard() {
             {isProfileOpen && (
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setIsProfileOpen(false)} />
-                <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl z-50 overflow-hidden animate-fade-in-up">
+                <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-neutral-800 bg-neutral-900/90 backdrop-blur-xl shadow-2xl z-50 overflow-hidden animate-fade-in-up">
                   
-                  {/* Profile header */}
-                  <div className="p-5 bg-gradient-to-br from-blue-50 to-pink-50 dark:from-slate-900 dark:to-slate-950 border-b border-slate-200 dark:border-slate-800 flex flex-col items-center text-center gap-3">
-                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg ${getAvatarClass(userEmail)}`}>
+                  {/* Dropdown Header */}
+                  <div className="p-5 bg-neutral-950/40 border-b border-neutral-800 flex flex-col items-center text-center gap-3">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-lg shadow-lg ${getAvatarClass(userEmail)}`}>
                       {getInitials(userEmail)}
                     </div>
                     <div>
-                      <p className="font-bold text-slate-800 dark:text-slate-100 text-sm">{getUsername(userEmail)}</p>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">{userEmail}</p>
+                      <p className="font-bold text-neutral-200 text-xs">{getUsername(userEmail)}</p>
+                      <p className="text-[10px] text-neutral-500 font-mono mt-0.5">{userEmail}</p>
                     </div>
-                    <span className="text-[9px] px-2.5 py-0.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-500 font-mono font-bold flex items-center gap-1.5">
+                    <span className="text-[9px] px-2.5 py-0.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 font-mono font-bold flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      Connected · Gmail
+                      Connected Account
                     </span>
                   </div>
 
-                  {/* Actions */}
+                  {/* Dropdown Actions */}
                   <div className="p-2">
                     <button
                       id="sync-profile-btn"
                       onClick={() => { handleSync(); setIsProfileOpen(false) }}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                      className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-neutral-300 hover:bg-neutral-800 transition cursor-pointer"
                     >
-                      <RefreshCw className="w-3.5 h-3.5 text-blue-500" />
+                      <RefreshCw className="w-3.5 h-3.5 text-indigo-400" />
                       Sync Inbox
                     </button>
-                    <div className="h-px bg-slate-100 dark:bg-slate-800 my-1" />
+                    <div className="h-px bg-neutral-800 my-1" />
                     <button
                       id="signout-profile-btn"
                       onClick={() => { handleLogout(); setIsProfileOpen(false) }}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition"
+                      className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-950/20 transition cursor-pointer"
                     >
-                      <LogOut className="w-3.5 h-3.5" />
+                      <LogOut className="w-3.5 h-3.5 text-rose-500" />
                       Sign Out
                     </button>
                   </div>
@@ -624,55 +596,57 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* ── Main Layout ─────────────────────────────────────────────────────── */}
+      {/* ── Main View Workspace ── */}
       <div className="flex-1 flex overflow-hidden min-h-0">
 
-        {/* Desktop Sidebar */}
+        {/* Sidebar Panel */}
         <aside className="hidden lg:flex w-64 shrink-0 flex-col">
           <SidebarContent />
         </aside>
 
-        {/* Content Area */}
+        {/* View Routing */}
         {viewMode === 'inbox' ? (
-          /* ── INBOX: Three-Pane Layout ──────────────────────────────────── */
+          
+          /* ── THREE-PANE INBOX WORKSPACE ── */
           <div className="flex-1 flex overflow-hidden min-h-0">
 
-            {/* Thread List */}
-            <div className={`flex flex-col w-full lg:w-96 border-r border-slate-200 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-950/30 shrink-0 ${
+            {/* Pane 1: Thread List */}
+            <div className={`flex flex-col w-full lg:w-96 border-r border-neutral-800/40 bg-neutral-950/30 shrink-0 ${
               mobilePaneView === 'detail' ? 'hidden lg:flex' : 'flex'
             }`}>
-              {/* List header */}
-              <div className="h-12 flex items-center justify-between px-4 border-b border-slate-200 dark:border-slate-800/60 shrink-0">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              
+              {/* Inbox Section Info */}
+              <div className="h-12 flex items-center justify-between px-5 border-b border-neutral-800/40 shrink-0">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
                   {selectedCategory} · {filteredThreads.length}
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-200/60 dark:bg-slate-800 border border-slate-300/60 dark:border-slate-700/60 text-slate-500 dark:text-slate-400">
-                  threads
+                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-400 uppercase">
+                  Workspace
                 </span>
               </div>
 
-              {/* Search */}
-              <div className="p-2 border-b border-slate-200 dark:border-slate-800/60 shrink-0">
+              {/* Search Bar */}
+              <div className="p-3 border-b border-neutral-800/40 shrink-0">
                 <div className="relative">
-                  <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-slate-400" />
+                  <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-neutral-500" />
                   <input
                     id="thread-search"
                     type="text"
-                    placeholder="Search subject or sender..."
+                    placeholder="Search sender, subject..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="w-full text-xs pl-8 pr-3 py-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition placeholder-slate-400 dark:placeholder-slate-600"
+                    className="w-full text-xs pl-9 pr-3 py-2 rounded-xl border border-neutral-800 bg-neutral-900/30 text-neutral-200 focus:outline-none focus:border-indigo-500/50 transition placeholder-neutral-600"
                   />
                 </div>
               </div>
 
-              {/* Thread list scroll */}
-              <div className="flex-1 overflow-y-auto p-2 space-y-1.5">
+              {/* Threads Scroll List */}
+              <div className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-none">
                 {filteredThreads.length === 0 ? (
                   <div className="flex flex-col items-center justify-center p-10 text-center h-48">
-                    {searchQuery ? <Search className="w-8 h-8 text-slate-300 dark:text-slate-700 mb-2" /> : <Inbox className="w-8 h-8 text-slate-300 dark:text-slate-700 mb-2" />}
-                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{searchQuery ? 'No matching threads' : 'Inbox is empty'}</p>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{searchQuery ? 'Clear search or try another term' : 'Sync your inbox to load emails'}</p>
+                    <Inbox className="w-8 h-8 text-neutral-700 mb-2" />
+                    <p className="text-xs font-semibold text-neutral-400">No emails matched query</p>
+                    <p className="text-[10px] text-neutral-500 mt-0.5">Connect your Gmail or click Sync</p>
                   </div>
                 ) : filteredThreads.map(thread => {
                   const active = activeThreadId === thread.id
@@ -680,30 +654,36 @@ export default function Dashboard() {
                     <button
                       key={thread.id}
                       onClick={() => openThread(thread.id)}
-                      className={`w-full text-left p-3.5 rounded-xl border transition-all duration-150 group ${
+                      className={`w-full text-left p-4 rounded-xl border transition-all duration-150 relative group cursor-pointer ${
                         active
-                          ? 'bg-white dark:bg-slate-800 border-blue-500/40 shadow-sm dark:shadow-md dark:shadow-blue-500/5'
-                          : 'bg-white/50 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800/60 hover:bg-white dark:hover:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm'
+                          ? 'bg-neutral-900/60 border-indigo-500/30 shadow-md shadow-indigo-500/5'
+                          : 'bg-neutral-900/10 border-neutral-900 hover:bg-neutral-900/30 hover:border-neutral-800'
                       }`}
                     >
-                      <div className="flex justify-between items-start mb-1 gap-2">
-                        <span className="font-semibold text-xs text-slate-700 dark:text-slate-200 truncate">
+                      {/* Active Indicator bar */}
+                      {active && <span className="absolute left-0 top-3 bottom-3 w-1 rounded-r-md bg-indigo-500 shadow-md shadow-indigo-500" />}
+                      
+                      <div className="flex justify-between items-start mb-1.5 gap-2">
+                        <span className="font-bold text-xs text-neutral-300 truncate">
                           {thread.participant_emails.join(', ').replace(/<[^>]*>/g, '')}
                         </span>
-                        <span className="text-[10px] text-slate-400 dark:text-slate-500 shrink-0 font-mono flex items-center gap-1">
+                        <span className="text-[9px] text-neutral-500 shrink-0 font-mono flex items-center gap-1 font-bold">
                           <Clock className="w-2.5 h-2.5" />
                           {new Date(thread.last_message_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                         </span>
                       </div>
-                      <p className="text-xs font-semibold text-slate-800 dark:text-slate-300 truncate mb-1">{thread.subject}</p>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mb-2">
-                        {thread.thread_summary || 'No summary available yet.'}
+                      
+                      <p className="text-xs font-bold text-neutral-200 truncate mb-1.5">{thread.subject}</p>
+                      
+                      <p className="text-[10px] text-neutral-400 line-clamp-2 leading-relaxed mb-3">
+                        {thread.thread_summary || 'Synchronizing and synthesizing email context...'}
                       </p>
+
                       <div className="flex items-center justify-between">
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${getCategoryStyle(thread.category)}`}>
+                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${getCategoryStyle(thread.category)}`}>
                           {thread.category || 'Uncategorized'}
                         </span>
-                        <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">{thread.message_count} msgs</span>
+                        <span className="text-[9px] text-neutral-500 font-mono font-bold uppercase">{thread.message_count} messages</span>
                       </div>
                     </button>
                   )
@@ -711,101 +691,108 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Thread Detail */}
-            <div className={`flex-1 flex flex-col overflow-hidden min-h-0 ${
+            {/* Pane 2: Thread Detailed View */}
+            <div className={`flex-1 flex flex-col overflow-hidden min-h-0 bg-neutral-950/20 ${
               mobilePaneView === 'list' ? 'hidden lg:flex' : 'flex'
             }`}>
-              {/* Mobile back button */}
-              <div className="lg:hidden flex items-center gap-2 px-4 py-2.5 border-b border-slate-200 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/40 shrink-0">
+              
+              {/* Mobile return link */}
+              <div className="lg:hidden flex items-center gap-2 px-5 py-3 border-b border-neutral-800/40 bg-neutral-950/60 shrink-0">
                 <button
                   onClick={() => setMobilePaneView('list')}
-                  className="flex items-center gap-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                  className="flex items-center gap-1.5 text-xs font-bold text-indigo-400 hover:text-indigo-300"
                 >
                   <ChevronLeft className="w-4 h-4" />
-                  All threads
+                  All discussions
                 </button>
               </div>
 
               {isThreadLoading ? (
-                <div className="flex-1 flex flex-col items-center justify-center gap-2 text-slate-500">
-                  <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-blue-500" />
-                  <p className="text-xs">Analyzing thread context...</p>
+                <div className="flex-1 flex flex-col items-center justify-center gap-3 text-neutral-500">
+                  <div className="relative w-8 h-8">
+                    <div className="absolute inset-0 border-2 border-indigo-500/20 rounded-full" />
+                    <div className="absolute inset-0 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">Synthesizing thread...</p>
                 </div>
               ) : activeThread ? (
                 <div className="flex-1 flex flex-col overflow-hidden min-h-0">
 
-                  {/* Thread header */}
-                  <div className="p-5 border-b border-slate-200 dark:border-slate-800/80 bg-white/30 dark:bg-slate-900/20 backdrop-blur-xl shrink-0">
-                    <div className="flex flex-wrap items-start justify-between gap-3 mb-1.5">
-                      <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100 leading-snug flex-1">{activeThread.thread.subject}</h2>
-                      <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full border shrink-0 ${getCategoryStyle(activeThread.thread.category)}`}>
+                  {/* Detailed Thread Header */}
+                  <div className="p-6 border-b border-neutral-800/40 backdrop-blur-xl bg-neutral-950/40 shrink-0">
+                    <div className="flex flex-wrap items-start justify-between gap-4 mb-2">
+                      <h2 className="text-base font-extrabold text-neutral-100 leading-snug flex-1">{activeThread.thread.subject}</h2>
+                      <span className={`text-[9px] font-bold px-2.5 py-1 rounded-full border shrink-0 ${getCategoryStyle(activeThread.thread.category)}`}>
                         {activeThread.thread.category || 'Uncategorized'}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate">
+                    <p className="text-[10px] text-neutral-500 font-mono">
                       Participants: {activeThread.thread.participant_emails.join(', ')}
                     </p>
                   </div>
 
-                  {/* Scroll area */}
-                  <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                  {/* Message Timeline Panel */}
+                  <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-none">
 
-                    {/* AI thread summary */}
+                    {/* AI Thread Summary overlay */}
                     {activeThread.thread.thread_summary && (
-                      <div className="p-4 rounded-xl border border-blue-200 dark:border-blue-500/20 bg-blue-50/60 dark:bg-blue-950/15 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl" />
-                        <div className="flex items-center gap-2 mb-2 text-blue-600 dark:text-blue-400">
-                          <Sparkles className="w-3.5 h-3.5" />
-                          <span className="text-[10px] font-bold uppercase tracking-wider">AI Synthesis</span>
+                      <div className="p-5 rounded-2xl border border-indigo-500/10 bg-gradient-to-r from-indigo-500/5 via-purple-500/3 to-pink-500/3 relative overflow-hidden shadow-sm">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+                        <div className="flex items-center gap-2 mb-2.5 text-indigo-400 font-bold">
+                          <Sparkles className="w-4 h-4 text-indigo-400 animate-pulse" />
+                          <span className="text-[9px] font-bold uppercase tracking-widest">AI Context Synthesis</span>
                         </div>
-                        <p className="text-xs text-blue-800 dark:text-blue-200 leading-relaxed">{activeThread.thread.thread_summary}</p>
+                        <p className="text-xs text-neutral-300 leading-relaxed">{activeThread.thread.thread_summary}</p>
                       </div>
                     )}
 
-                    {/* Email cards */}
+                    {/* Chronological Message Stack */}
                     {activeThread.emails.map(email => (
-                      <div key={email.id} className="rounded-xl border border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900/50 overflow-hidden shadow-sm">
-                        {/* Email header */}
-                        <div className="px-4 py-3 bg-slate-50/80 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800/50 flex items-center justify-between flex-wrap gap-2">
-                          <div className="flex items-center gap-2.5">
-                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-sm ${getAvatarClass(email.from_email)}`}>
+                      <div key={email.id} className="rounded-2xl border border-neutral-800/60 bg-neutral-900/20 overflow-hidden shadow-sm hover:border-neutral-800 transition">
+                        
+                        {/* Message Header */}
+                        <div className="px-5 py-4 bg-neutral-950/40 border-b border-neutral-850 flex items-center justify-between flex-wrap gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-white font-bold text-xs shadow-md ${getAvatarClass(email.from_email)}`}>
                               {email.from_email.charAt(0).toUpperCase()}
                             </div>
                             <div>
-                              <p className="text-xs font-bold text-slate-800 dark:text-slate-200">{email.from_email}</p>
-                              <p className="text-[10px] text-slate-500 dark:text-slate-400">To: {email.to_emails?.join(', ')}</p>
+                              <p className="text-xs font-bold text-neutral-200">{email.from_email}</p>
+                              <p className="text-[9px] text-neutral-500">To: {email.to_emails?.join(', ')}</p>
                             </div>
                           </div>
-                          <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">
-                            {new Date(email.received_at).toLocaleString()}
+                          <span className="text-[10px] text-neutral-500 font-mono font-bold uppercase">
+                            {new Date(email.received_at).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </div>
-                        {/* Body */}
-                        <div className="p-4 text-xs text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line border-b border-slate-100 dark:border-slate-800/40">
+                        
+                        {/* MIME text contents */}
+                        <div className="p-5 text-xs text-neutral-300 leading-relaxed whitespace-pre-line border-b border-neutral-900/45 selection:bg-indigo-500/20">
                           {email.body_text}
                         </div>
-                        {/* AI summary */}
+                        
+                        {/* Single email summary card */}
                         {email.summary && (
-                          <div className="px-4 py-2.5 bg-slate-50/60 dark:bg-slate-900/30 text-[11px] text-slate-500 dark:text-slate-400 flex items-start gap-2 border-b border-slate-100 dark:border-slate-800/20">
-                            <Sparkles className="w-3 h-3 text-blue-500 shrink-0 mt-0.5" />
-                            <span><strong>Summary:</strong> {email.summary}</span>
+                          <div className="px-5 py-3.5 bg-neutral-950/20 text-xs text-neutral-400 flex items-start gap-2.5 border-b border-neutral-900/20">
+                            <Sparkles className="w-3.5 h-3.5 text-indigo-400 shrink-0 mt-0.5 animate-pulse" />
+                            <span><strong className="text-indigo-400">Brief:</strong> {email.summary}</span>
                           </div>
                         )}
-                        {/* Category reasoning */}
+                        
+                        {/* Auto category validation */}
                         {email.category_explanation && (
-                          <div className="px-4 py-2 text-[10px] text-slate-400 dark:text-slate-500 flex items-center justify-between gap-2">
-                            <span className="flex items-center gap-1.5"><Tag className="w-3 h-3" />{email.category_explanation}</span>
-                            <span className="font-mono shrink-0">Confidence: {Math.round((email.category_confidence || 0) * 100)}%</span>
+                          <div className="px-5 py-2.5 text-[9px] text-neutral-500 flex items-center justify-between gap-3 bg-neutral-950/10 font-bold">
+                            <span className="flex items-center gap-1.5"><Tag className="w-3 h-3 text-neutral-500" />{email.category_explanation}</span>
+                            <span className="font-mono uppercase">Confidence: {Math.round((email.category_confidence || 0) * 100)}%</span>
                           </div>
                         )}
                       </div>
                     ))}
                   </div>
 
-                  {/* Reply bar */}
-                  <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-slate-900/20 backdrop-blur-xl shrink-0">
-                    {/* Quick chips */}
-                    <div className="flex gap-2 mb-3 overflow-x-auto scrollbar-none py-0.5">
+                  {/* AI Quick Reply Assistant */}
+                  <div className="p-5 border-t border-neutral-800 bg-neutral-950/40 backdrop-blur-xl shrink-0">
+                    <div className="flex gap-2 mb-3 overflow-x-auto scrollbar-none py-1">
                       {[
                         { label: '🤝 Accept & Schedule', text: 'Draft a professional acceptance and schedule a follow-up meeting' },
                         { label: '❌ Decline Politely',  text: 'Draft a polite refusal explaining our schedule is fully committed' },
@@ -814,30 +801,32 @@ export default function Dashboard() {
                         <button
                           key={label}
                           onClick={() => setReplyInstruction(text)}
-                          className="text-[10px] font-semibold px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:border-blue-400 dark:hover:border-blue-500/60 hover:text-blue-600 dark:hover:text-blue-400 transition shrink-0"
+                          className="text-[9px] font-bold uppercase tracking-wider px-3.5 py-2 rounded-xl border border-neutral-800 bg-neutral-900/60 text-neutral-400 hover:border-indigo-500/40 hover:text-indigo-400 transition shrink-0 cursor-pointer"
                         >
                           {label}
                         </button>
                       ))}
                     </div>
+                    
                     {replySuccess && (
-                      <div className="mb-3 px-3 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs flex items-center gap-2">
+                      <div className="mb-3 px-3 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2">
                         <CheckCircle className="w-4 h-4 shrink-0" />
                         {replySuccess}
                       </div>
                     )}
-                    <div className="relative">
+                    
+                    <div className="relative flex items-center">
                       <textarea
                         value={replyInstruction}
                         onChange={e => setReplyInstruction(e.target.value)}
                         placeholder='Draft reply instruction (e.g. "Say yes to Friday deadline, mention team is ready")'
                         rows={2}
-                        className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 p-3 pr-12 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                        className="w-full rounded-2xl border border-neutral-800 bg-neutral-950/80 p-4 pr-14 text-xs text-neutral-200 placeholder-neutral-600 focus:outline-none focus:border-indigo-550/40 resize-none"
                       />
                       <button
                         onClick={handleReplySubmit}
                         disabled={isReplying || !replyInstruction.trim()}
-                        className="absolute bottom-3 right-3 p-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition disabled:opacity-40"
+                        className="absolute right-4 p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white transition disabled:opacity-40 cursor-pointer shadow-md shadow-indigo-500/10 active:scale-95"
                       >
                         {isReplying ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <SendHorizontal className="w-3.5 h-3.5" />}
                       </button>
@@ -846,45 +835,48 @@ export default function Dashboard() {
                 </div>
               ) : (
                 <div className="flex-1 flex flex-col items-center justify-center gap-3 text-center p-8">
-                  <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                    <Inbox className="w-7 h-7 text-slate-400 dark:text-slate-500" />
+                  <div className="w-14 h-14 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center">
+                    <Inbox className="w-6 h-6 text-neutral-600 animate-pulse-slow" />
                   </div>
-                  <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">No Thread Selected</p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 max-w-xs">Pick a conversation from the left to view emails and AI summaries</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-neutral-500">No Discussion Selected</p>
+                  <p className="text-[10px] text-neutral-600 max-w-[200px]">Select a thread from the side list to examine parsed metadata and compose responses.</p>
                 </div>
               )}
             </div>
           </div>
 
         ) : (
-          /* ── AI CHAT AGENT ─────────────────────────────────────────────── */
+          
+          /* ── CLAUDE/OPENAI-STYLE RAG AI CHAT AGENT ── */
           <div className="flex-1 flex overflow-hidden min-h-0">
 
-            {/* Chat sessions sidebar */}
-            <div className="hidden md:flex w-60 border-r border-slate-200 dark:border-slate-800/60 flex-col bg-white/30 dark:bg-slate-950/20 shrink-0">
-              <div className="h-12 flex items-center justify-between px-3 border-b border-slate-200 dark:border-slate-800/60 shrink-0">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Discussions</span>
+            {/* Chat Sessions Sidebar list */}
+            <div className="hidden md:flex w-60 border-r border-neutral-800/40 flex-col bg-neutral-950/20 shrink-0">
+              
+              <div className="h-12 flex items-center justify-between px-4 border-b border-neutral-800/40 shrink-0">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">History</span>
                 <button
                   id="new-chat-btn"
                   onClick={handleCreateNewSession}
-                  className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 font-bold transition"
+                  className="flex items-center gap-1 text-[9px] uppercase tracking-wider px-2 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 font-bold transition cursor-pointer"
                 >
                   <Plus className="w-3 h-3" /> New
                 </button>
               </div>
-              <div className="flex-1 overflow-y-auto p-2 space-y-1">
+
+              <div className="flex-1 overflow-y-auto p-2.5 space-y-1.5 scrollbar-none">
                 {chatSessions.map(session => (
                   <button
                     key={session.id}
                     onClick={() => setActiveSession(session.id)}
-                    className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium transition ${
+                    className={`w-full text-left px-3.5 py-3 rounded-xl text-xs font-semibold transition cursor-pointer border ${
                       activeSessionId === session.id
-                        ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-sm'
-                        : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100/70 dark:hover:bg-slate-800/30'
+                        ? 'bg-neutral-900 border-neutral-800 text-neutral-200 shadow-sm'
+                        : 'text-neutral-400 border-transparent hover:bg-neutral-900/30'
                     }`}
                   >
-                    <div className="flex items-center gap-2 truncate">
-                      <MessageSquare className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                    <div className="flex items-center gap-2.5 truncate">
+                      <MessageSquare className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                       <span className="truncate">{session.title}</span>
                     </div>
                   </button>
@@ -892,36 +884,36 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Chat main */}
-            <div className="flex-1 flex flex-col overflow-hidden min-h-0 bg-slate-50/30 dark:bg-slate-950/10">
+            {/* Chat Conversation Timeline */}
+            <div className="flex-1 flex flex-col overflow-hidden min-h-0 bg-neutral-950/10">
               
-              {/* Chat header */}
-              <div className="h-12 flex items-center justify-between px-5 border-b border-slate-200 dark:border-slate-800/60 bg-white/40 dark:bg-slate-900/20 shrink-0">
-                <div className="flex items-center gap-2 text-xs">
-                  <Sparkles className="w-4 h-4 text-blue-500" />
-                  <span className="font-bold text-slate-700 dark:text-slate-200">AI Retrieval Assistant</span>
-                  <span className="hidden sm:inline text-slate-300 dark:text-slate-600">•</span>
-                  <span className="hidden sm:inline text-slate-400 dark:text-slate-500">Powered by Gemini 2.0 Flash + pgvector</span>
+              {/* Header Info */}
+              <div className="h-12 flex items-center justify-between px-6 border-b border-neutral-800/40 bg-neutral-950/40 shrink-0">
+                <div className="flex items-center gap-2.5 text-xs">
+                  <Sparkles className="w-4 h-4 text-indigo-400" />
+                  <span className="font-bold text-neutral-300">Semantic Chat Assistant</span>
+                  <span className="hidden sm:inline text-neutral-700">•</span>
+                  <span className="hidden sm:inline text-neutral-500 text-[10px] font-mono">Gemini RAG + pgvector Hybrid Search</span>
                 </div>
-                {/* Mobile: new chat button */}
+                
                 <button
                   onClick={handleCreateNewSession}
-                  className="md:hidden flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 font-bold"
+                  className="md:hidden flex items-center gap-1.5 text-[9px] uppercase tracking-wider px-2.5 py-1 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-bold"
                 >
                   <Plus className="w-3 h-3" /> New
                 </button>
               </div>
 
-              {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {/* Chat timeline feed */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-none">
                 {chatMessages.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center text-center p-6 max-w-sm mx-auto">
-                    <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 mb-4 animate-pulse-slow">
-                      <Zap className="w-6 h-6" />
+                    <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-5 animate-pulse-slow">
+                      <Zap className="w-6 h-6 animate-pulse" />
                     </div>
-                    <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Semantic Email Search</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-5">
-                      Ask anything about your emails. The agent uses pgvector + NVIDIA NIM to find and synthesize answers.
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-300 mb-2.5">AI semantic query console</h3>
+                    <p className="text-[11px] text-neutral-500 leading-relaxed mb-6">
+                      Ask questions regarding project specs, deliverables, or invoice deadlines. Context is automatically extracted and synthesized with deep citations.
                     </p>
                     <div className="w-full space-y-2">
                       {[
@@ -932,7 +924,7 @@ export default function Dashboard() {
                         <button
                           key={q}
                           onClick={() => setChatQuery(q)}
-                          className="w-full text-left p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/50 text-xs text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800/60 hover:border-blue-400/50 transition shadow-sm"
+                          className="w-full text-left p-3.5 rounded-xl border border-neutral-850 bg-neutral-900/30 text-xs text-neutral-400 hover:bg-neutral-900/50 hover:border-indigo-500/30 transition shadow-sm cursor-pointer"
                         >
                           "{q}"
                         </button>
@@ -942,76 +934,84 @@ export default function Dashboard() {
                 ) : chatMessages.map((msg, i) => {
                   const isUser = msg.role === 'user'
                   return (
-                    <div key={i} className={`flex gap-3 animate-fade-in-up ${isUser ? 'justify-end' : 'justify-start'}`}>
+                    <div key={i} className={`flex gap-3.5 animate-fade-in-up ${isUser ? 'justify-end' : 'justify-start'}`}>
                       {!isUser && (
-                        <div className="w-7 h-7 rounded-full bg-gradient-premium flex items-center justify-center shrink-0 mt-1">
+                        <div className="w-7 h-7 rounded-xl bg-gradient-premium flex items-center justify-center shrink-0 mt-1 shadow-sm">
                           <Sparkles className="w-3.5 h-3.5 text-white" />
                         </div>
                       )}
-                      <div className={`max-w-[78%] p-4 text-xs leading-relaxed shadow-sm ${isUser ? 'chat-bubble-user' : 'chat-bubble-ai'}`}>
-                        <p className="whitespace-pre-line">{msg.content}</p>
-                        {/* Citations */}
+                      
+                      {/* Bubble */}
+                      <div className={`max-w-[80%] p-4 text-xs leading-relaxed border ${
+                        isUser
+                          ? 'chat-bubble-user bg-gradient-to-br from-indigo-600 to-indigo-700 border-indigo-500/10 text-white shadow-md'
+                          : 'chat-bubble-ai bg-neutral-900/30 border-neutral-850 text-neutral-300 shadow-sm'
+                      }`}>
+                        <p className="whitespace-pre-line selection:bg-indigo-500/20">{msg.content}</p>
+                        
+                        {/* Citation badges with thread ID links */}
                         {!isUser && msg.source_emails?.length > 0 && (
-                          <div className="mt-3 pt-2.5 border-t border-slate-200/80 dark:border-slate-700/60 flex flex-wrap gap-1.5 items-center">
-                            <span className="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">Sources:</span>
+                          <div className="mt-4 pt-3 border-t border-neutral-800/40 flex flex-wrap gap-1.5 items-center">
+                            <span className="text-[9px] text-neutral-500 font-bold uppercase tracking-wider">Citations:</span>
                             {msg.source_emails.map((eid: string) => (
                               <button
                                 key={eid}
-                                onClick={() => { setViewMode('inbox'); setActiveThread(eid) }}
-                                className="px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900 text-[10px] text-blue-600 dark:text-blue-400 font-mono flex items-center gap-1 hover:border-blue-400/50 transition"
+                                onClick={() => { setViewMode('inbox'); openThread(eid) }}
+                                className="px-2.5 py-0.5 rounded-full border border-neutral-800 bg-neutral-950 text-[10px] text-indigo-400 font-mono flex items-center gap-1.5 hover:border-indigo-500/40 transition cursor-pointer hover:shadow-lg hover:shadow-indigo-500/5"
                               >
-                                <ExternalLink className="w-2.5 h-2.5" />
+                                <ExternalLink className="w-2.5 h-2.5 text-indigo-400" />
                                 {eid.substring(0, 8)}
                               </button>
                             ))}
                           </div>
                         )}
                       </div>
+
                       {isUser && (
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white font-bold text-xs shrink-0 mt-1 ${getAvatarClass(userEmail)}`}>
+                        <div className={`w-7 h-7 rounded-xl flex items-center justify-center text-white font-bold text-[10px] shrink-0 mt-1 shadow-sm ${getAvatarClass(userEmail)}`}>
                           {getInitials(userEmail)}
                         </div>
                       )}
                     </div>
                   )
                 })}
+
+                {/* Shimmer dot loader */}
                 {isChatLoading && (
-                  <div className="flex gap-3 justify-start animate-fade-in">
-                    <div className="w-7 h-7 rounded-full bg-gradient-premium flex items-center justify-center shrink-0 mt-1">
+                  <div className="flex gap-3.5 justify-start animate-fade-in">
+                    <div className="w-7 h-7 rounded-xl bg-gradient-premium flex items-center justify-center shrink-0 mt-1 shadow-sm">
                       <Sparkles className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <div className="chat-bubble-ai px-5 py-3.5 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 bg-blue-500 rounded-full dot-bounce-1" />
-                      <span className="w-1.5 h-1.5 bg-blue-500 rounded-full dot-bounce-2" />
-                      <span className="w-1.5 h-1.5 bg-blue-500 rounded-full dot-bounce-3" />
-                      <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-1.5">Retrieving context...</span>
+                    <div className="chat-bubble-ai bg-neutral-900/30 border border-neutral-850 px-5 py-4 rounded-xl flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full dot-bounce-1" />
+                      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full dot-bounce-2" />
+                      <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full dot-bounce-3" />
+                      <span className="text-[10px] text-neutral-500 font-mono ml-2">Retrieving Context...</span>
                     </div>
                   </div>
                 )}
                 <div ref={chatBottomRef} />
               </div>
 
-              {/* Chat input */}
-              <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/20 backdrop-blur-xl shrink-0">
-                <div className="flex gap-2 items-end">
-                  <div className="flex-1 relative">
-                    <input
-                      id="chat-input"
-                      value={chatQuery}
-                      onChange={e => setChatQuery(e.target.value)}
-                      onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleChatSubmit()}
-                      placeholder='Ask about your emails (e.g. "Any NVIDIA invoices?")'
-                      className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 px-4 py-3 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500/60 transition"
-                    />
-                  </div>
+              {/* Chat Input Console (Floating Vercel/ChatGPT style) */}
+              <div className="p-6 shrink-0 bg-neutral-950/20">
+                <div className="max-w-2xl mx-auto flex gap-2 items-center bg-neutral-900/60 backdrop-blur-xl border border-neutral-800 rounded-2xl p-2.5 shadow-2xl focus-within:border-indigo-500/40 transition">
+                  <input
+                    id="chat-input"
+                    value={chatQuery}
+                    onChange={e => setChatQuery(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleChatSubmit()}
+                    placeholder='Query database (e.g. "Do I have any invoices?")'
+                    className="flex-1 text-xs bg-transparent border-0 px-3 py-2 text-neutral-200 placeholder-neutral-600 focus:outline-none"
+                  />
                   <button
                     id="chat-submit-btn"
                     onClick={handleChatSubmit}
                     disabled={isChatLoading || !chatQuery.trim()}
-                    className="px-5 py-3 rounded-xl bg-gradient-premium hover:shadow-lg hover:shadow-blue-500/20 font-semibold text-xs text-white transition-all disabled:opacity-50 flex items-center gap-2 shadow-md"
+                    className="px-4 py-2 rounded-xl bg-gradient-premium hover:shadow-lg hover:shadow-indigo-500/20 font-bold text-xs text-white transition-all disabled:opacity-50 flex items-center gap-2 shadow-md cursor-pointer"
                   >
                     <SendHorizontal className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Ask</span>
+                    <span>Ask</span>
                   </button>
                 </div>
               </div>
@@ -1020,37 +1020,40 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* ── Compose Modal ─────────────────────────────────────────────────────── */}
+      {/* ── AI COMPOSE ASSISTANT OVERLAY DIALOG ── */}
       {isComposeOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="w-full sm:max-w-xl sm:rounded-2xl rounded-t-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
+          <div className="w-full sm:max-w-xl sm:rounded-2xl rounded-t-2xl border border-neutral-800 bg-neutral-900 shadow-2xl overflow-hidden animate-fade-in-up">
 
-            <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/50 flex justify-between items-center">
-              <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200">
-                <PenTool className="w-4 h-4 text-blue-500" />
-                <span className="font-bold text-sm">AI Compose Assistant</span>
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-neutral-800/60 bg-neutral-950/50 flex justify-between items-center">
+              <div className="flex items-center gap-2.5 text-neutral-200">
+                <Sparkles className="w-4 h-4 text-indigo-400" />
+                <span className="font-extrabold text-sm tracking-wider uppercase font-mono">Compose Assistant</span>
               </div>
               <button
                 onClick={() => setComposeOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-slate-200/70 dark:hover:bg-slate-800/70 transition text-slate-500"
+                className="p-1.5 rounded-xl hover:bg-neutral-800 transition text-neutral-500 hover:text-neutral-200 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="p-5 space-y-4">
-              {/* Tone selector pills */}
+            {/* Modal Body */}
+            <div className="p-6 space-y-5">
+              
+              {/* Tone Selection */}
               <div>
-                <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Tone</label>
+                <label className="block text-[9px] font-bold text-neutral-500 uppercase tracking-widest mb-2.5">Tone Profile</label>
                 <div className="flex flex-wrap gap-1.5">
                   {(['Professional', 'Casual', 'Urgent', 'Apologetic', 'Persuasive'] as const).map(tone => (
                     <button
                       key={tone}
                       onClick={() => setComposeTone(tone)}
-                      className={`px-3 py-1.5 rounded-full text-[11px] font-semibold border transition ${
+                      className={`px-3.5 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider border transition cursor-pointer ${
                         composeTone === tone
-                          ? 'bg-blue-500 text-white border-blue-500 shadow-md shadow-blue-500/20'
-                          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-blue-400 dark:hover:border-blue-500/60'
+                          ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-500/20'
+                          : 'bg-neutral-950 border-neutral-850 text-neutral-400 hover:border-indigo-500/30'
                       }`}
                     >
                       {tone}
@@ -1059,46 +1062,59 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Signature */}
+              {/* Sender Name Signoff */}
               <div>
-                <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Sign-off Name</label>
+                <label className="block text-[9px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Signature Name</label>
                 <input
                   value={senderName}
                   onChange={e => setSenderName(e.target.value)}
                   placeholder={getUsername(userEmail)}
-                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full rounded-xl border border-neutral-800 bg-neutral-950 p-3 text-xs text-neutral-200 focus:outline-none focus:border-indigo-500/50"
                 />
               </div>
 
-              {/* Instructions */}
+              {/* Instruction Prompt */}
               <div>
-                <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">Draft Instructions</label>
+                <label className="block text-[9px] font-bold text-neutral-500 uppercase tracking-widest mb-2">Draft Instructions</label>
                 <textarea
                   value={composePrompt}
                   onChange={e => setComposePrompt(e.target.value)}
-                  placeholder='e.g. "Tell AWS billing we had a test DB run overnight by mistake and request a refund"'
+                  placeholder='e.g. "Draft an update asking for status report of AWS integration task..."'
                   rows={3}
-                  className="w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-3 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none placeholder-slate-400"
+                  className="w-full rounded-xl border border-neutral-800 bg-neutral-950 p-3 text-xs text-neutral-200 focus:outline-none focus:border-indigo-500/50 resize-none placeholder-neutral-700"
                 />
               </div>
 
+              {/* Generate button */}
               <button
                 onClick={handleComposeSubmit}
                 disabled={isComposing || !composePrompt.trim()}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-premium font-bold text-xs text-white transition-all disabled:opacity-50 shadow-lg hover:shadow-blue-500/20"
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-premium font-bold text-xs text-white shadow-lg hover:shadow-indigo-500/20 hover:scale-[1.005] active:scale-[0.995] transition disabled:opacity-50 cursor-pointer"
               >
                 {isComposing ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <><Sparkles className="w-3.5 h-3.5" /> Generate Draft</>}
               </button>
 
+              {/* Generated Draft Display */}
               {composedDraft && (
-                <div className="border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-950 overflow-hidden">
-                  <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-800">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Subject</p>
-                    <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">{composedDraft.subject}</p>
+                <div className="border border-neutral-800 rounded-xl bg-neutral-950 overflow-hidden shadow-inner relative group">
+                  <div className="px-4 py-3.5 border-b border-neutral-850 flex justify-between items-center">
+                    <div>
+                      <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider">Subject</p>
+                      <p className="text-xs font-bold text-neutral-200 mt-0.5">{composedDraft.subject}</p>
+                    </div>
+                    
+                    {/* Copy to clipboard button */}
+                    <button
+                      onClick={() => handleCopyDraft(`${composedDraft.subject}\n\n${composedDraft.body}`)}
+                      className="px-2.5 py-1.5 rounded-xl border border-neutral-800 bg-neutral-900 text-[10px] text-indigo-400 font-bold uppercase tracking-wider hover:border-indigo-500/40 hover:text-indigo-300 transition cursor-pointer flex items-center gap-1.5 shadow-sm"
+                    >
+                      {copyFeedback ? <Check className="w-3 h-3 text-emerald-400" /> : <Send className="w-3 h-3" />}
+                      <span>{copyFeedback ? 'Copied' : 'Copy'}</span>
+                    </button>
                   </div>
-                  <div className="p-4">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Body</p>
-                    <div className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line max-h-44 overflow-y-auto font-mono bg-white dark:bg-slate-900/60 p-3 rounded-lg border border-slate-200 dark:border-slate-800/40">
+                  <div className="p-4 bg-neutral-950/60">
+                    <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-wider mb-2">Body</p>
+                    <div className="text-xs text-neutral-300 leading-relaxed whitespace-pre-line max-h-40 overflow-y-auto font-mono bg-neutral-900/30 p-3 rounded-lg border border-neutral-850">
                       {composedDraft.body}
                     </div>
                   </div>

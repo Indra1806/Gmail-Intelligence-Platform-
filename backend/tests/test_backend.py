@@ -3,6 +3,7 @@ import uuid
 from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 from fastapi.testclient import TestClient
+from app.core.config import settings
 
 from app.main import app
 from app.api.dependencies import (
@@ -196,7 +197,7 @@ def test_health_check():
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json()["status"] == "healthy"
-    assert response.json()["sandbox_mode"] is False
+    assert response.json()["sandbox_mode"] == settings.SANDBOX_MODE
 
 
 def test_auth_login_redirect():

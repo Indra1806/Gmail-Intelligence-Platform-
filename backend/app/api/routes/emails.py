@@ -115,9 +115,7 @@ async def trigger_classify(
             snippet=email.snippet or email.body_text
         )
         await repo.update(eid, {
-            "category": res.category,
-            "category_confidence": res.confidence,
-            "category_explanation": res.explanation
+            "category": res.category
         })
         await thread_repo.update(email.thread_id, {"category": res.category})
 
