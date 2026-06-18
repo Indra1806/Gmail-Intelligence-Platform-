@@ -172,8 +172,8 @@ export default function LandingPage() {
 
   // Auto-redirect already authenticated users
   useEffect(() => {
-    const userId = localStorage.getItem('repeatless_user_id')
-    const accountId = localStorage.getItem('repeatless_account_id')
+    const userId = localStorage.getItem('OVO_user_id')
+    const accountId = localStorage.getItem('OVO_account_id')
     if (userId && accountId) {
       window.location.href = '/dashboard'
     } else {
@@ -184,7 +184,7 @@ export default function LandingPage() {
   // Manage cookie consent banner display
   useEffect(() => {
     if (!checkingAuth) {
-      const consent = localStorage.getItem('repeatless_cookie_consent')
+      const consent = localStorage.getItem('OVO_cookie_consent')
       if (!consent) {
         setShowCookieConsent(true)
       }
@@ -194,8 +194,8 @@ export default function LandingPage() {
   // Trigger registration popup after 6 seconds
   useEffect(() => {
     if (!checkingAuth) {
-      const dismissed = sessionStorage.getItem('repeatless_promo_dismissed')
-      const userId = localStorage.getItem('repeatless_user_id')
+      const dismissed = sessionStorage.getItem('OVO_promo_dismissed')
+      const userId = localStorage.getItem('OVO_user_id')
       
       if (!dismissed && !userId) {
         const timer = setTimeout(() => {
@@ -228,13 +228,13 @@ export default function LandingPage() {
 
   // Handle Cookie consent actions
   const handleCookieConsent = (accept: boolean) => {
-    localStorage.setItem('repeatless_cookie_consent', accept ? 'accepted' : 'declined')
+    localStorage.setItem('OVO_cookie_consent', accept ? 'accepted' : 'declined')
     setShowCookieConsent(false)
   }
 
   // Handle Close registration promo
   const closePromoPopup = () => {
-    sessionStorage.setItem('repeatless_promo_dismissed', 'true')
+    sessionStorage.setItem('OVO_promo_dismissed', 'true')
     setShowPromoPopup(false)
   }
 

@@ -55,7 +55,7 @@ from pydantic_settings import BaseSettings
 from pydantic import SecretStr
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "Repeatless AI"
+    PROJECT_NAME: str = "OVO.AI"
     API_V1_STR: str = "/api/v1"
     
     # Supabase

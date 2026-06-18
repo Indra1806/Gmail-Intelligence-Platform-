@@ -135,7 +135,7 @@ export default function Dashboard() {
   useEffect(() => {
     // Mark as mounted so isReturningUser-dependent UI only renders client-side
     setMounted(true)
-    setIsReturningUser(!!localStorage.getItem('repeatless_user_id'))
+    setIsReturningUser(!!localStorage.getItem('OVO_user_id'))
 
     const params = new URLSearchParams(window.location.search)
     const uId    = params.get('user_id')
@@ -144,14 +144,14 @@ export default function Dashboard() {
 
     if (uId && accId && email) {
       setAuth(uId, accId, email)
-      localStorage.setItem('repeatless_user_id', uId)
-      localStorage.setItem('repeatless_account_id', accId)
-      localStorage.setItem('repeatless_email', email)
+      localStorage.setItem('OVO_user_id', uId)
+      localStorage.setItem('OVO_account_id', accId)
+      localStorage.setItem('OVO_email', email)
       window.history.replaceState({}, document.title, window.location.pathname)
     } else {
-      const cu = localStorage.getItem('repeatless_user_id')
-      const ca = localStorage.getItem('repeatless_account_id')
-      const ce = localStorage.getItem('repeatless_email')
+      const cu = localStorage.getItem('OVO_user_id')
+      const ca = localStorage.getItem('OVO_account_id')
+      const ce = localStorage.getItem('OVO_email')
       if (cu && ca && ce) {
         setAuth(cu, ca, ce)
       } else {
@@ -162,9 +162,9 @@ export default function Dashboard() {
   }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem('repeatless_user_id')
-    localStorage.removeItem('repeatless_account_id')
-    localStorage.removeItem('repeatless_email')
+    localStorage.removeItem('OVO_user_id')
+    localStorage.removeItem('OVO_account_id')
+    localStorage.removeItem('OVO_email')
     logout()
     window.location.href = '/'
   }

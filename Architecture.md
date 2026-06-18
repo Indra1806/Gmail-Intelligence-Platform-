@@ -5,9 +5,9 @@
 
 # Architecture & Technical Design Document
 
-**Gmail Intelligence Platform (Repeatless Technical Assessment)**
+**Gmail Intelligence Platform (OVO Technical Assessment)**
 
-This document details the system architecture, database design, AI pipeline orchestration, Gmail synchronization strategy, and deployment architecture for the Repeatless Gmail Intelligence Platform. It is written at a Senior/Principal Engineer level to detail the technical tradeoffs and design decisions made to ensure scalability, security, and accuracy.
+This document details the system architecture, database design, AI pipeline orchestration, Gmail synchronization strategy, and deployment architecture for the OVO Gmail Intelligence Platform. It is written at a Senior/Principal Engineer level to detail the technical tradeoffs and design decisions made to ensure scalability, security, and accuracy.
 
 ---
 

@@ -3,10 +3,10 @@ version: '3.8'
 services:
   db:
     image: pgvector/pgvector:pg15
-    container_name: repeatless-db
+    container_name: OVO-db
     restart: always
     environment:
-      POSTGRES_DB: repeatless
+      POSTGRES_DB: OVO
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: secretpassword
     ports:
@@ -15,7 +15,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./supabase/migrations:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d repeatless"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d OVO"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -24,12 +24,12 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: repeatless-backend
+    container_name: OVO-backend
     restart: always
     ports:
       - "8000:8000"
     environment:
-      - PROJECT_NAME=Repeatless AI
+      - PROJECT_NAME=OVO.AI
       - API_V1_STR=/api/v1
       - SUPABASE_URL=http://db:5432
       - SUPABASE_SERVICE_ROLE_KEY=secretpassword
@@ -47,7 +47,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: repeatless-frontend
+    container_name: OVO-frontend
     restart: always
     ports:
       - "3000:3000"

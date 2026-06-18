@@ -25,7 +25,7 @@ Configure these environment variables in your Railway Service dashboard:
 | Variable | Recommended Production Value | Description |
 | :--- | :--- | :--- |
 | `SANDBOX_MODE` | `false` | **CRITICAL:** Set to `false` to enable live Gmail API, Gemini, and NIM integration instead of mocks. |
-| `PROJECT_NAME` | `"Repeatless AI"` | The title of the API platform. |
+| `PROJECT_NAME` | `"OVO. AI"` | The title of the API platform. |
 | `API_V1_STR` | `"/api/v1"` | The routing prefix for backend endpoints. |
 | `SUPABASE_URL` | `https://[your-project-id].supabase.co` | The API URL of your Supabase instance. |
 | `SUPABASE_SERVICE_ROLE_KEY` | `[your-service-role-secret-key]` | Service role JWT key (bypasses RLS to write background-synced emails). |
@@ -95,8 +95,8 @@ flowchart TD
 1. Log in to [Supabase](https://supabase.com/). Create a new database project.
 2. Open the **SQL Editor** in the sidebar.
 3. Apply the initial schemas sequentially:
-   - Run the script in [001_initial_schema.sql](file:///c:/Users/indra/repeatless/supabase/migrations/001_initial_schema.sql) to create `gmail_accounts`, `threads`, `emails`, `vector_embeddings`, and `chat_logs` tables.
-   - Run the script in [002_match_emails.sql](file:///c:/Users/indra/repeatless/supabase/migrations/002_match_emails.sql) to compile the pgvector match function (`match_emails`).
+   - Run the script in [001_initial_schema.sql](file:///c:/Users/indra/OVO/supabase/migrations/001_initial_schema.sql) to create `gmail_accounts`, `threads`, `emails`, `vector_embeddings`, and `chat_logs` tables.
+   - Run the script in [002_match_emails.sql](file:///c:/Users/indra/OVO/supabase/migrations/002_match_emails.sql) to compile the pgvector match function (`match_emails`).
 4. Go to **Settings ➡️ API** and copy the **Project URL** and the **Service Role Key**.
 
 ### Step 2: Google Cloud Console Setup
@@ -115,14 +115,14 @@ flowchart TD
 2. Click **New Service ➡️ GitHub Repository** and select your repository.
 3. Set the **Root Directory** settings option to `backend`.
 4. In the service **Variables** tab, enter all the backend environment variables listed in Section 1 (use placeholders for `GOOGLE_REDIRECT_URI` if necessary).
-5. Railway will deploy the container. Once completed, go to **Settings ➡️ Networking** and click **Generate Domain** to get your public backend URL (e.g. `https://repeatless-backend.up.railway.app`).
+5. Railway will deploy the container. Once completed, go to **Settings ➡️ Networking** and click **Generate Domain** to get your public backend URL (e.g. `https://OVO-backend.up.railway.app`).
 
 ### Step 4: Link Redirect URIs in Google Cloud
 1. Return to the Google Cloud Console ➡️ **Credentials** section.
 2. Edit your OAuth Client ID configuration.
 3. Under **Authorized Redirect URIs**, enter:
    `https://[your-railway-backend-domain]/api/v1/auth/callback`
-   *(e.g., `https://repeatless-backend.up.railway.app/api/v1/auth/callback`)*
+   *(e.g., `https://OVO-backend.up.railway.app/api/v1/auth/callback`)*
 4. Save the changes.
 5. In Railway, update the `GOOGLE_REDIRECT_URI` environment variable to match this exact value. Redeploy the service to apply changes.
 

@@ -17,7 +17,7 @@
 
 </div>
 
-Repeatless is a production-ready, AI-powered Gmail Intelligence Platform. It connects securely to a user's Gmail inbox, parses message threads, automatically categorizes incoming mail using structured JSON models, and exposes a semantic RAG conversational assistant to query, summarize, and act on email data.
+OVO is a production-ready, AI-powered Gmail Intelligence Platform. It connects securely to a user's Gmail inbox, parses message threads, automatically categorizes incoming mail using structured JSON models, and exposes a semantic RAG conversational assistant to query, summarize, and act on email data.
 
 Designed for performance and data isolation, the platform uses a decoupled Next.js 15 client and FastAPI backend with a Supabase PostgreSQL/pgvector database.
 
@@ -40,7 +40,7 @@ Designed for performance and data isolation, the platform uses a decoupled Next.
 The project separates dependencies completely to prevent cross-pollution of libraries.
 
 ```text
-repeatless/
+OVO/
 ├── .github/                     
 │   └── workflows/               # Independent CI/CD workflows
 │       ├── backend.yml          # Python lint (flake8) & Pytest suite run
