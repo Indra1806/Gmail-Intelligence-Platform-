@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import Image from 'next/image'
 import { 
   Inbox, 
   Send, 
@@ -14,9 +13,6 @@ import {
   Clock,
   ExternalLink,
   SendHorizontal,
-  Sun,
-  Moon,
-  Monitor,
   Search,
   Menu,
   X,
@@ -24,9 +20,33 @@ import {
   ChevronLeft,
   Plus,
   Zap,
-  User,
   Sparkles,
 } from 'lucide-react'
+
+interface ChatSession {
+  id: string
+  user_id: string
+  title: string | null
+  created_at: string
+}
+
+interface ChatCitation {
+  email_id?: string
+  thread_id?: string
+  subject?: string
+  from_email?: string
+  snippet?: string
+}
+
+interface ChatMessage {
+  id?: string
+  session_id?: string
+  role: 'user' | 'assistant' | 'system'
+  content: string
+  created_at?: string | Date
+  citations?: ChatCitation[]
+  source_emails?: string[]
+}
 import { 
   fetchThreads, 
   fetchThreadDetails, 
@@ -92,12 +112,11 @@ export default function Dashboard() {
     activeThreadId, setActiveThread,
     activeSessionId, setActiveSession,
     setAuth, logout,
-    theme, setTheme
+    theme
   } = useAppStore()
 
   // UI state
   const [isMobileNavOpen, setMobileNavOpen] = useState(false)
-  const [isThemeOpen, setIsThemeOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [searchQuery, setSearchQuery]     = useState('')
   const [viewMode, setViewMode]           = useState<'inbox' | 'chat'>('inbox')
@@ -107,8 +126,8 @@ export default function Dashboard() {
   // Data state
   const [threads, setThreads]                   = useState<Thread[]>([])
   const [activeThread, setActiveThreadDetails]  = useState<{ thread: Thread; emails: Email[] } | null>(null)
-  const [chatSessions, setChatSessions]         = useState<any[]>([])
-  const [chatMessages, setChatMessages]         = useState<any[]>([])
+  const [chatSessions, setChatSessions]         = useState<ChatSession[]>([])
+  const [chatMessages, setChatMessages]         = useState<ChatMessage[]>([])
 
   // Loading state
   const [isSyncing, setIsSyncing]           = useState(false)
@@ -131,12 +150,10 @@ export default function Dashboard() {
   // ── Auth ──────────────────────────────────────────────────────────────────
 
   const [mounted, setMounted]               = useState(false)
-  const [isReturningUser, setIsReturningUser] = useState(false)
 
   useEffect(() => {
-    // Mark as mounted so isReturningUser-dependent UI only renders client-side
-    setMounted(true)
-    setIsReturningUser(!!localStorage.getItem('OVO_user_id'))
+    // Mark as mounted so UI only renders client-side
+    Promise.resolve().then(() => setMounted(true))
 
     const params = new URLSearchParams(window.location.search)
     const uId    = params.get('user_id')
@@ -160,7 +177,7 @@ export default function Dashboard() {
         window.location.href = '/'
       }
     }
-  }, [])
+  }, [setAuth])
 
   const handleLogout = () => {
     localStorage.removeItem('OVO_user_id')
@@ -213,7 +230,7 @@ export default function Dashboard() {
       if (data?.thread?.id && data.thread.id !== id) setActiveThread(data.thread.id)
     } catch (err) { console.error(err) }
     finally { setIsThreadLoading(false) }
-  }, [])
+  }, [setActiveThread])
 
   const loadChatSessions = useCallback(async () => {
     if (!userId) return
@@ -222,7 +239,7 @@ export default function Dashboard() {
       setChatSessions(data)
       if (data.length > 0 && !activeSessionId) setActiveSession(data[0].id)
     } catch (err) { console.error(err) }
-  }, [userId, activeSessionId])
+  }, [userId, activeSessionId, setActiveSession])
 
   const loadChatMessages = useCallback(async (sid: string) => {
     try {
@@ -231,10 +248,29 @@ export default function Dashboard() {
     } catch (err) { console.error(err) }
   }, [])
 
-  useEffect(() => { if (accountId) loadThreads() }, [accountId, selectedCategory])
-  useEffect(() => { if (userId && viewMode === 'chat') loadChatSessions() }, [userId, viewMode])
-  useEffect(() => { if (activeSessionId) loadChatMessages(activeSessionId) }, [activeSessionId])
-  useEffect(() => { if (activeThreadId) loadThreadDetails(activeThreadId) }, [activeThreadId])
+  useEffect(() => {
+    if (accountId) {
+      Promise.resolve().then(() => loadThreads())
+    }
+  }, [accountId, selectedCategory, loadThreads])
+
+  useEffect(() => {
+    if (userId && viewMode === 'chat') {
+      Promise.resolve().then(() => loadChatSessions())
+    }
+  }, [userId, viewMode, loadChatSessions])
+
+  useEffect(() => {
+    if (activeSessionId) {
+      Promise.resolve().then(() => loadChatMessages(activeSessionId))
+    }
+  }, [activeSessionId, loadChatMessages])
+
+  useEffect(() => {
+    if (activeThreadId) {
+      Promise.resolve().then(() => loadThreadDetails(activeThreadId))
+    }
+  }, [activeThreadId, loadThreadDetails])
   useEffect(() => { chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [chatMessages])
 
   // ── Actions ───────────────────────────────────────────────────────────────
@@ -289,16 +325,19 @@ export default function Dashboard() {
       setActiveSession(sid)
       setChatSessions(prev => [sess, ...prev])
     }
-    const newMsg = { role: 'user', content: chatQuery, created_at: new Date() }
+    const newMsg: ChatMessage = { role: 'user', content: chatQuery, created_at: new Date() }
     setChatMessages(prev => [...prev, newMsg])
     setChatQuery('')
     setIsChatLoading(true)
     try {
       const res = await queryChat(chatQuery, sid!, userId!, accountId!)
-      setChatMessages(prev => [...prev, {
-        role: 'assistant', content: res.answer,
-        source_emails: res.cited_sources, created_at: new Date()
-      }])
+      const assistantMsg: ChatMessage = {
+        role: 'assistant',
+        content: res.answer,
+        source_emails: res.cited_sources,
+        created_at: new Date()
+      }
+      setChatMessages(prev => [...prev, assistantMsg])
     } catch (err) { console.error(err) }
     finally { setIsChatLoading(false) }
   }
@@ -343,7 +382,7 @@ export default function Dashboard() {
 
   // ── SIDEBAR CONTENT ────────────────────────────────────────────────────────
 
-  const SidebarContent = ({ onClose }: { onClose?: () => void }) => (
+  const renderSidebarContent = (onClose?: () => void) => (
     <div className="flex flex-col h-full bg-neutral-900/40 dark:bg-neutral-950/70 backdrop-blur-xl border-r border-neutral-800/40">
       
       {/* Sidebar Header */}
@@ -470,7 +509,7 @@ export default function Dashboard() {
         <>
           <div className="mobile-sidebar-overlay lg:hidden" onClick={() => setMobileNavOpen(false)} />
           <div className="mobile-sidebar lg:hidden">
-            <SidebarContent onClose={() => setMobileNavOpen(false)} />
+            {renderSidebarContent(() => setMobileNavOpen(false))}
           </div>
         </>
       )}
@@ -527,7 +566,7 @@ export default function Dashboard() {
           <div className="relative">
             <button
               id="profile-btn"
-              onClick={() => { setIsProfileOpen(!isProfileOpen); setIsThemeOpen(false) }}
+              onClick={() => { setIsProfileOpen(!isProfileOpen) }}
               className={`flex items-center gap-2 pl-1 pr-3 py-1 rounded-xl border transition cursor-pointer ${
                 isProfileOpen
                   ? 'border-indigo-500/40 bg-indigo-500/5'
@@ -594,7 +633,7 @@ export default function Dashboard() {
 
         {/* Sidebar Panel */}
         <aside className="hidden lg:flex w-64 shrink-0 flex-col">
-          <SidebarContent />
+          {renderSidebarContent()}
         </aside>
 
         {/* View Routing */}
@@ -943,7 +982,7 @@ export default function Dashboard() {
                         <p className="whitespace-pre-line selection:bg-indigo-500/20">{msg.content}</p>
                         
                         {/* Citation badges with thread ID links */}
-                        {!isUser && msg.source_emails?.length > 0 && (
+                        {!isUser && msg.source_emails && msg.source_emails.length > 0 && (
                           <div className="mt-4 pt-3 border-t border-neutral-800/40 flex flex-wrap gap-1.5 items-center">
                             <span className="text-[9px] text-neutral-500 font-bold uppercase tracking-wider">Citations:</span>
                             {msg.source_emails.map((eid: string) => (
