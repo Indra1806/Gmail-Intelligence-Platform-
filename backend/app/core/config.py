@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     # Google/Gmail OAuth 2.0 Credentials
     GOOGLE_CLIENT_ID: str = "your-google-client-id"
     GOOGLE_CLIENT_SECRET: str = "your-google-client-secret"
-    GOOGLE_REDIRECT_URI: str = "http://localhost:8000/api/v1/auth/callback"
+    GOOGLE_REDIRECT_URI: str = "https://gmail-intelligence-platform.onrender.com/api/v1/auth/callback" if os.environ.get("RENDER") else "http://localhost:8000/api/v1/auth/callback"
 
     # AI Models API Keys
     GEMINI_API_KEY: str = "your-gemini-key"
